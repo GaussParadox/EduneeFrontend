@@ -1,39 +1,24 @@
-import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+const API_BASE_URL = 'http://127.0.0.1:8000/api';
 
-// Configuración base de axios
-const api: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+export const apiFetch = async (
+  endpoint: string,
+  options?: RequestInit
+) => {
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+    ...options,
+  });
 
-// Interceptor para peticiones (agregar token, etc.)
-api.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem('token');
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error: AxiosError) => {
-    return Promise.reject(error);
+  const data = await response.json();
+
+  if (!response.ok) {
+  console.error("Error backend:", data);
+  throw new Error(JSON.stringify(data));
   }
-);
 
-// Interceptor para respuestas (manejo de errores global)
-api.interceptors.response.use(
-  (response: AxiosResponse) => response,
-  (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      // Manejar sesión expirada
-      localStorage.removeItem('token');
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
-  }
-);
 
-export default api;
+  return data;
+};
