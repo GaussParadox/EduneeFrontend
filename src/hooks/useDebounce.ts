@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 /**
  * Hook para debounce de valores
  * Útil para búsquedas, validaciones, etc.
- * @param {any} value - Valor a debounce
+ * @param {T} value - Valor a debounce
  * @param {number} delay - Retraso en milisegundos
  */
-const useDebounce = (value, delay = 500) => {
-  const [debouncedValue, setDebouncedValue] = useState(value);
+const useDebounce = <T>(value: T, delay: number = 500): T => {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
   useEffect(() => {
     const handler = setTimeout(() => {
