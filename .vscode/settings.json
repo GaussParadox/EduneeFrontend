@@ -1,0 +1,16 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "files.associations": {
+    "*.css": "css",
+    "*.jsx": "javascriptreact"
+  },
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact"
+  },
+  "javascript.suggest.autoImports": true,
+  "javascript.updateImportsOnFileMove.enabled": "always"
+}
