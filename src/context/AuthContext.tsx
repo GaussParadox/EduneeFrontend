@@ -47,26 +47,26 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
      Cargar sesión al iniciar
   ========================= */
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
+  const storedUser =
+    localStorage.getItem('user') ||
+    sessionStorage.getItem('user');
 
-    if (storedUser) {
-      const parsedUser: User = JSON.parse(storedUser);
-      setUser(parsedUser);
-      setIsAuthenticated(true);
-    }
+  if (storedUser) {
+    const parsedUser: User = JSON.parse(storedUser);
+    setUser(parsedUser);
+    setIsAuthenticated(true);
+  }
   }, []);
 
   /* =========================
      Login
   ========================= */
   const login = (userData: User) => {
-    setUser(userData);
-    setIsAuthenticated(true);
-
-    // Persistencia
-    localStorage.setItem('user', JSON.stringify(userData));
-    localStorage.setItem('token', userData.token);
+  setUser(userData);
+  setIsAuthenticated(true);
   };
+
+
 
   /* =========================
      Logout
@@ -76,8 +76,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsAuthenticated(false);
 
     localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+
+    sessionStorage.removeItem('user');
+    sessionStorage.removeItem('access_token');
+    sessionStorage.removeItem('refresh_token');
   };
+
 
   return (
     <AuthContext.Provider

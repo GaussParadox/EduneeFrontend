@@ -1,26 +1,9 @@
-    import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faHome,
-  faThLarge,
-  faFile,
-  faFolderOpen,
-  faGraduationCap,
-  faUsers,
-  faBookOpen,
-  faCog,
-  faSearch,
-  faBell,
-  faUserCircle,
-  faPlus,
-  faDownload,
-  faStar,
-  faImage,
-  faPencilRuler,
-  faVideo,
-} from '@fortawesome/free-solid-svg-icons';
+import {faHome,faThLarge,faFile,faFolderOpen,faGraduationCap,faUsers,faBookOpen,faCog,faSearch,faBell,faUserCircle,faPlus,faDownload,faStar,faImage,faPencilRuler,faVideo,} from '@fortawesome/free-solid-svg-icons';
 import { obtenerPruebasRecientes } from '@/services/pruebasService';
+import { Prueba } from 'interfaces/prueba';
 
 type SidebarItem =
   | 'home'
@@ -33,12 +16,6 @@ type SidebarItem =
 
 type TopTab = 'home' | 'apps' | 'files' | 'projects' | 'learn';
 
-export interface Prueba {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  tipo?: string;
-}
 
 const Dashboard = () => {
   const { user } = useAuth();

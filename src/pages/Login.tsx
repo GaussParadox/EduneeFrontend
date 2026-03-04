@@ -4,17 +4,13 @@ import loginImage from '../assets/imagen.jpg';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { loginAdministrador } from '../services/authService';
+import { FormData } from 'interfaces/FormData';
 
-interface FormData {
-  usuario: string;
-  contrasena: string;
-  keepLoggedIn: boolean;
-}
 
 const Login = () => {
   const [formData, setFormData] = useState<FormData>({
-    usuario: '',
-    contrasena: '',
+    username: '',
+    password: '',
     keepLoggedIn: false,
   });
 
@@ -40,15 +36,15 @@ const Login = () => {
 
   try {
     const userData = await loginAdministrador(
-      formData.usuario,
-      formData.contrasena,
-      formData.keepLoggedIn 
+      formData.username,
+      formData.password,  
+      formData.keepLoggedIn
     );
 
     login(userData); 
     navigate('/dashboard');
   } catch (err: any) {
-    setError(err.message || 'Usuario o contraseña incorrectos');
+    setError(err.message || 'username o contraseña incorrectos');
   } finally {
     setLoading(false);
   }
@@ -114,16 +110,16 @@ const Login = () => {
             <MagicMotion>
               <form onSubmit={handleSubmit} className="space-y-5">
 
-                {/* Usuario */}
+                {/* username */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Usuario
+                    username
                   </label>
                   <input
                     type="text"
-                    name="usuario"
+                    name="username"
                     placeholder="admin"
-                    value={formData.usuario}
+                    value={formData.username}
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-3 text-gray-900 bg-gray-50 border border-gray-300 rounded-lg outline-none transition-all duration-300 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
@@ -137,9 +133,9 @@ const Login = () => {
                   </label>
                   <input
                     type="password"
-                    name="contrasena"
+                    name="password"
                     placeholder="••••••••"
-                    value={formData.contrasena}
+                    value={formData.password}
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-3 text-gray-900 bg-gray-50 border border-gray-300 rounded-lg outline-none transition-all duration-300 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
