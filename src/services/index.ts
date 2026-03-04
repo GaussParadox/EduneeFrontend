@@ -1,3 +1,3 @@
 export * from './api';
 export * from './authService';
-export * from './pruebaService';
+export * from './pruebasService';

@@ -1,33 +1,69 @@
-    import { useState } from 'react';
-    import { useAuth } from '../context/AuthContext';
-    import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-    import {
-    faHome,
-    faThLarge,
-    faFile,
-    faFolderOpen,
-    faGraduationCap,
-    faUsers,
-    faBookOpen,
-    faCog,
-    faSearch,
-    faBell,
-    faUserCircle,
-    faPlus,
-    faDownload,
-    faStar,
-    faImage,
-    faPencilRuler,
-    faVideo,
-    } from '@fortawesome/free-solid-svg-icons';
+    import { useEffect, useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faHome,
+  faThLarge,
+  faFile,
+  faFolderOpen,
+  faGraduationCap,
+  faUsers,
+  faBookOpen,
+  faCog,
+  faSearch,
+  faBell,
+  faUserCircle,
+  faPlus,
+  faDownload,
+  faStar,
+  faImage,
+  faPencilRuler,
+  faVideo,
+} from '@fortawesome/free-solid-svg-icons';
+import { obtenerPruebasRecientes } from '@/services/pruebasService';
 
-    type SidebarItem = 'home' | 'apps' | 'files' | 'projects' | 'learn' | 'community' | 'resources';
-    type TopTab = 'home' | 'apps' | 'files' | 'projects' | 'learn';
+type SidebarItem =
+  | 'home'
+  | 'apps'
+  | 'files'
+  | 'projects'
+  | 'learn'
+  | 'community'
+  | 'resources';
 
-    const Dashboard = () => {
-    const { user } = useAuth();
-    const [activeSidebar, setActiveSidebar] = useState<SidebarItem>('home');
-    const [activeTab, setActiveTab] = useState<TopTab>('home');
+type TopTab = 'home' | 'apps' | 'files' | 'projects' | 'learn';
+
+export interface Prueba {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  tipo?: string;
+}
+
+const Dashboard = () => {
+  const { user } = useAuth();
+  const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+  const [activeSidebar, setActiveSidebar] = useState<SidebarItem>('home');
+  const [activeTab, setActiveTab] = useState<TopTab>('home');
+  const [recentApps, setRecentApps] = useState<Prueba[]>([]);
+  const [loadingApps, setLoadingApps] = useState(true);
+
+  useEffect(() => {
+    if (!token) return; 
+
+    const cargarPruebas = async () => {
+      try {
+        const data = await obtenerPruebasRecientes(token);
+        setRecentApps(data);
+      } catch (error) {
+        console.error('Error al cargar pruebas recientes', error);
+      } finally {
+        setLoadingApps(false);
+      }
+    };
+
+    cargarPruebas();
+  }, [token]);
 
     const sidebarItems = [
         { id: 'home' as SidebarItem, icon: faHome, label: 'Home', count: null },
@@ -47,26 +83,30 @@
         { id: 'learn' as TopTab, label: 'Learn' },
     ];
 
-    const recentApps = [
-        {
-        name: 'CursoMaster',
-        description: 'Gestión avanzada de cursos',
-        icon: faImage,
-        color: 'bg-purple-100 text-purple-600',
-        },
-        {
-        name: 'EvaluaPro',
-        description: 'Sistema profesional de evaluación',
-        icon: faPencilRuler,
-        color: 'bg-orange-100 text-orange-600',
-        },
-        {
-        name: 'VideoStudio',
-        description: 'Editor de videos educativos',
-        icon: faVideo,
-        color: 'bg-pink-100 text-pink-600',
-        },
-    ];
+    const getAppStyle = (tipo?: string) => {
+    switch (tipo) {
+        case 'curso':
+        return {
+            icon: faImage,
+            color: 'bg-purple-100 text-purple-600',
+        };
+        case 'evaluacion':
+        return {
+            icon: faPencilRuler,
+            color: 'bg-orange-100 text-orange-600',
+        };
+        case 'video':
+        return {
+            icon: faVideo,
+            color: 'bg-pink-100 text-pink-600',
+        };
+        default:
+        return {
+            icon: faImage,
+            color: 'bg-gray-100 text-gray-600',
+        };
+    }
+    };
 
     return (
         <div className="flex h-screen bg-gray-50 overflow-hidden">
@@ -224,31 +264,48 @@
                         Ver Todas
                         </button>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {recentApps.map((app, index) => (
-                        <div
-                            key={index}
-                            className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-shadow"
-                        >
-                            <div className="flex items-start justify-between mb-4">
+
+                    {loadingApps ? (
+                        <p className="text-gray-500 text-sm">Cargando apps recientes...</p>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {recentApps.map((app) => {
+                            const style = getAppStyle(app.tipo);
+
+                            return (
                             <div
-                                className={`w-12 h-12 ${app.color} rounded-lg flex items-center justify-center`}
+                                key={app.id}
+                                className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-shadow"
                             >
-                                <FontAwesomeIcon icon={app.icon} className="text-xl" />
+                                <div className="flex items-start justify-between mb-4">
+                                <div
+                                    className={`w-12 h-12 ${style.color} rounded-lg flex items-center justify-center`}
+                                >
+                                    <FontAwesomeIcon icon={style.icon} className="text-xl" />
+                                </div>
+
+                                <FontAwesomeIcon
+                                    icon={faStar}
+                                    className="text-gray-300 hover:text-yellow-400 cursor-pointer transition-colors"
+                                />
+                                </div>
+
+                                <h4 className="font-semibold text-gray-900 mb-1">
+                                {app.nombre}
+                                </h4>
+
+                                <p className="text-sm text-gray-500 mb-4">
+                                {app.descripcion}
+                                </p>
+
+                                <button className="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-900 transition-colors">
+                                Abrir
+                                </button>
                             </div>
-                            <FontAwesomeIcon
-                                icon={faStar}
-                                className="text-gray-300 hover:text-yellow-400 cursor-pointer transition-colors"
-                            />
-                            </div>
-                            <h4 className="font-semibold text-gray-900 mb-1">{app.name}</h4>
-                            <p className="text-sm text-gray-500 mb-4">{app.description}</p>
-                            <button className="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-900 transition-colors">
-                            Abrir
-                            </button>
+                            );
+                        })}
                         </div>
-                        ))}
-                    </div>
+                    )}
                     </div>
 
                     {/* Recent Files & Active Projects */}

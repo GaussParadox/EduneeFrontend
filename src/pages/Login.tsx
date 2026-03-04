@@ -1,6 +1,8 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { MagicMotion } from 'react-magic-motion';
 import loginImage from '../assets/imagen.jpg';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { loginAdministrador } from '../services/authService';
 
 interface FormData {
@@ -16,6 +18,9 @@ const Login = () => {
     keepLoggedIn: false,
   });
 
+  const { login } = useAuth(); 
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,33 +34,25 @@ const Login = () => {
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
+  e.preventDefault();
+  setError(null);
+  setLoading(true);
 
-    try {
-      const data = await loginAdministrador(
-        formData.usuario,
-        formData.contrasena
-      );
+  try {
+    const userData = await loginAdministrador(
+      formData.usuario,
+      formData.contrasena,
+      formData.keepLoggedIn 
+    );
 
-      console.log('Login exitoso:', data);
-
-      // Si luego implementas JWT, aquí guardarías el token:
-      // if (formData.keepLoggedIn) {
-      //   localStorage.setItem('token', data.token);
-      // } else {
-      //   sessionStorage.setItem('token', data.token);
-      // }
-
-      alert('Inicio de sesión exitoso');
-
-    } catch (err: any) {
-      setError(err.message || 'Error al iniciar sesión');
-    } finally {
-      setLoading(false);
-    }
-  };
+    login(userData); 
+    navigate('/dashboard');
+  } catch (err: any) {
+    setError(err.message || 'Usuario o contraseña incorrectos');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen flex">
