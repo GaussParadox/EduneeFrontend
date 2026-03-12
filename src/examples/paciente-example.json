@@ -1,0 +1,43 @@
+{
+"paciente": {
+    "nombres": "Juan Carlos",
+    "apellidos": "García Pérez",
+    "numero_identificacion": "1234567890",
+    "telefono": "0987654321",
+    "direccion": "Av. Principal 123, Quito, Ecuador",
+    "genero": "Masculino",
+    "fecha_registro": "2026-03-11T10:30:00.000Z"
+},
+"respuestas": [
+    {
+    "pregunta_id": 1,
+    "opcion_seleccionada_id": 2,
+    "valor_respuesta": "B",
+    "fecha_respuesta": "2026-03-11T10:30:00.000Z"
+    },
+    {
+    "pregunta_id": 2,
+    "opcion_seleccionada_id": 5,
+    "valor_respuesta": "circular",
+    "fecha_respuesta": "2026-03-11T10:30:00.000Z"
+    },
+    {
+    "pregunta_id": 3,
+    "opcion_seleccionada_id": 9,
+    "valor_respuesta": "ocasional",
+    "fecha_respuesta": "2026-03-11T10:30:00.000Z"
+    },
+    {
+    "pregunta_id": 4,
+    "opcion_seleccionada_id": 13,
+    "valor_respuesta": "azul",
+    "fecha_respuesta": "2026-03-11T10:30:00.000Z"
+    },
+    {
+    "pregunta_id": 5,
+    "opcion_seleccionada_id": 15,
+    "valor_respuesta": "diario",
+    "fecha_respuesta": "2026-03-11T10:30:00.000Z"
+    }
+]
+}
