@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faUser,
@@ -10,39 +12,21 @@ import {
   faClipboardQuestion,
   faImage,
 } from '@fortawesome/free-solid-svg-icons';
-
-interface FormData {
-  nombres: string;
-  apellidos: string;
-  numero_identificacion: string;
-  telefono: string;
-  direccion: string;
-  genero: string;
-}
-
-interface Pregunta {
-  pregunta_id: number;
-  enunciado: string;
-  tipo_pregunta: string;
-  recurso_visual: string | null;
-  obligatoria: boolean;
-  opciones: Opcion[];
-}
-
-interface Opcion {
-  opcion_id: number;
-  texto_opcion: string;
-  valor_opcion: string;
-}
-
-interface Respuesta {
-  pregunta_id: number;
-  opcion_id: number;
-  valor_respuesta: string;
-}
+import {
+  FormDataPruebaProta,
+  Pregunta,
+  Opcion,
+  Respuesta,
+} from 'interfaces/FormDataPruebaProta';
 
 const Form = () => {
-  const [formData, setFormData] = useState<FormData>({
+  const { id } = useParams<{ id: string }>();
+
+  const token =
+    localStorage.getItem('access_token') ||
+    sessionStorage.getItem('access_token');
+
+  const [formData, setFormData] = useState<FormDataPruebaProta>({
     nombres: '',
     apellidos: '',
     numero_identificacion: '',
@@ -51,97 +35,52 @@ const Form = () => {
     genero: '',
   });
 
-  const [respuestas, setRespuestas] = useState<Respuesta[]>([]);
+  const [respuestas, setRespuestas]     = useState<Respuesta[]>([]);
+  const [preguntas, setPreguntas]       = useState<Pregunta[]>([]);
+  const [nombrePrueba, setNombrePrueba] = useState('');
+  const [loadingForm, setLoadingForm]   = useState(true);
+  const [errorForm, setErrorForm]       = useState<string | null>(null);
 
-  // Preguntas de ejemplo - estas podrían venir de una API
-  const preguntas: Pregunta[] = [
-    {
-      pregunta_id: 1,
-      enunciado: '¿Cuál de las siguientes imágenes muestra el número correcto?',
-      tipo_pregunta: 'opcion_multiple',
-      recurso_visual: 'Imagen 1',
-      obligatoria: true,
-      opciones: [
-        { opcion_id: 1, texto_opcion: 'Opción A', valor_opcion: 'A' },
-        { opcion_id: 2, texto_opcion: 'Opción B', valor_opcion: 'B' },
-        { opcion_id: 3, texto_opcion: 'Opción C', valor_opcion: 'C' },
-        { opcion_id: 4, texto_opcion: 'Opción D', valor_opcion: 'D' },
-      ],
-    },
-    {
-      pregunta_id: 2,
-      enunciado: 'Identifique el patrón en la siguiente imagen',
-      tipo_pregunta: 'opcion_multiple',
-      recurso_visual: 'Imagen 2',
-      obligatoria: true,
-      opciones: [
-        { opcion_id: 5, texto_opcion: 'Patrón circular', valor_opcion: 'circular' },
-        { opcion_id: 6, texto_opcion: 'Patrón lineal', valor_opcion: 'lineal' },
-        { opcion_id: 7, texto_opcion: 'Patrón irregular', valor_opcion: 'irregular' },
-      ],
-    },
-    {
-      pregunta_id: 3,
-      enunciado: '¿Ha experimentado alguna dificultad visual recientemente?',
-      tipo_pregunta: 'opcion_multiple',
-      recurso_visual: null,
-      obligatoria: false,
-      opciones: [
-        { opcion_id: 8, texto_opcion: 'Sí, frecuentemente', valor_opcion: 'si_frecuente' },
-        { opcion_id: 9, texto_opcion: 'Ocasionalmente', valor_opcion: 'ocasional' },
-        { opcion_id: 10, texto_opcion: 'No', valor_opcion: 'no' },
-      ],
-    },
-    {
-      pregunta_id: 4,
-      enunciado: 'Observe la siguiente imagen y seleccione el color predominante',
-      tipo_pregunta: 'opcion_multiple',
-      recurso_visual: 'Imagen 3',
-      obligatoria: true,
-      opciones: [
-        { opcion_id: 11, texto_opcion: 'Rojo', valor_opcion: 'rojo' },
-        { opcion_id: 12, texto_opcion: 'Verde', valor_opcion: 'verde' },
-        { opcion_id: 13, texto_opcion: 'Azul', valor_opcion: 'azul' },
-        { opcion_id: 14, texto_opcion: 'Amarillo', valor_opcion: 'amarillo' },
-      ],
-    },
-    {
-      pregunta_id: 5,
-      enunciado: '¿Con qué frecuencia realiza actividades que requieren distinción de colores?',
-      tipo_pregunta: 'opcion_multiple',
-      recurso_visual: null,
-      obligatoria: true,
-      opciones: [
-        { opcion_id: 15, texto_opcion: 'Diariamente', valor_opcion: 'diario' },
-        { opcion_id: 16, texto_opcion: 'Semanalmente', valor_opcion: 'semanal' },
-        { opcion_id: 17, texto_opcion: 'Mensualmente', valor_opcion: 'mensual' },
-        { opcion_id: 18, texto_opcion: 'Raramente', valor_opcion: 'raro' },
-      ],
-    },
-  ];
+  // ── Cargar preguntas desde la API ──────────────────────────────────────────
+  useEffect(() => {
+    if (!id || !token) return;
 
-  const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData({
-      ...formData,
-      [field]: value,
-    });
+    const cargar = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:8000/api/pruebas/${id}/`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setPreguntas(res.data.preguntas);
+        setNombrePrueba(res.data.nombre_prueba);
+      } catch (err) {
+        setErrorForm('No se pudieron cargar las preguntas de la prueba.');
+        console.error(err);
+      } finally {
+        setLoadingForm(false);
+      }
+    };
+
+    cargar();
+  }, [id, token]);
+
+  const handleInputChange = (field: keyof FormDataPruebaProta, value: string) => {
+    setFormData({ ...formData, [field]: value });
   };
 
-  const handleRespuestaChange = (pregunta_id: number, opcion_id: number, valor_opcion: string) => {
-    // Actualizar o agregar respuesta
+  const handleRespuestaChange = (
+    pregunta_id: number,
+    opcion_id: number,
+    valor_opcion: string
+  ) => {
     const nuevasRespuestas = respuestas.filter((r) => r.pregunta_id !== pregunta_id);
-    nuevasRespuestas.push({
-      pregunta_id,
-      opcion_id,
-      valor_respuesta: valor_opcion,
-    });
+    nuevasRespuestas.push({ pregunta_id, opcion_id, valor_respuesta: valor_opcion });
     setRespuestas(nuevasRespuestas);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validar que todas las preguntas obligatorias estén respondidas
     const preguntasObligatorias = preguntas.filter((p) => p.obligatoria);
     const respuestasObligatorias = respuestas.filter((r) =>
       preguntasObligatorias.some((p) => p.pregunta_id === r.pregunta_id)
@@ -152,50 +91,69 @@ const Form = () => {
       return;
     }
 
-    // Generar JSON con los datos exactos de la tabla
-    const pacienteData = {
+    const payload = {
       paciente: {
-        nombres: formData.nombres,
-        apellidos: formData.apellidos,
+        nombres:               formData.nombres,
+        apellidos:             formData.apellidos,
         numero_identificacion: formData.numero_identificacion,
-        telefono: formData.telefono,
-        direccion: formData.direccion,
-        genero: formData.genero,
-        fecha_registro: new Date().toISOString(),
+        telefono:              formData.telefono,
+        direccion:             formData.direccion,
+        genero:                formData.genero,
+        fecha_registro:        new Date().toISOString(),
       },
       respuestas: respuestas.map((r) => ({
-        pregunta_id: r.pregunta_id,
+        pregunta_id:            r.pregunta_id,
         opcion_seleccionada_id: r.opcion_id,
-        valor_respuesta: r.valor_respuesta,
-        fecha_respuesta: new Date().toISOString(),
+        valor_respuesta:        r.valor_respuesta,
+        fecha_respuesta:        new Date().toISOString(),
       })),
     };
 
-    console.log('Datos Completos (JSON):', JSON.stringify(pacienteData, null, 2));
-    alert('¡Registro completo! Revisa la consola para ver los datos JSON.');
-  };
-
-  const handleSaveProgress = () => {
-    localStorage.setItem('patientForm', JSON.stringify(formData));
-    localStorage.setItem('patientAnswers', JSON.stringify(respuestas));
-    console.log('Progreso guardado:', { formData, respuestas });
-    alert('¡Progreso guardado exitosamente!');
+    try {
+      await axios.post(
+        `http://localhost:8000/api/pruebas/${id}/registrar/`,
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert('¡Prueba enviada correctamente!');
+    } catch (err) {
+      console.error(err);
+      alert('Ocurrió un error al enviar la prueba. Intenta de nuevo.');
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Content */}
       <div className="max-w-3xl mx-auto px-4 py-8">
-        {/* Title Section */}
+
+        {/* Title */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Registro de Paciente</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            {nombrePrueba || 'Registro de Paciente'}
+          </h1>
           <p className="text-gray-600 text-sm">
             Complete el siguiente formulario con la información del paciente.
           </p>
         </div>
 
+        {/* Loading */}
+        {loadingForm && (
+          <div className="bg-white rounded-lg p-8 text-center text-gray-500 text-sm">
+            Cargando preguntas...
+          </div>
+        )}
+
+        {/* Error */}
+        {errorForm && (
+          <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 text-sm mb-6">
+            {errorForm}
+          </div>
+        )}
+
+        {!loadingForm && !errorForm && (
         <form onSubmit={handleSubmit}>
-          {/* Información Personal */}
+
+          {/* ── Información Personal ── */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
             <div className="flex items-center gap-2 mb-6">
               <FontAwesomeIcon icon={faUser} className="text-xl text-blue-500" />
@@ -203,7 +161,6 @@ const Form = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-              {/* Nombres */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Nombres <span className="text-red-500">*</span>
@@ -218,7 +175,6 @@ const Form = () => {
                 />
               </div>
 
-              {/* Apellidos */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Apellidos <span className="text-red-500">*</span>
@@ -235,7 +191,6 @@ const Form = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {/* Número de Identificación */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Número de Identificación <span className="text-red-500">*</span>
@@ -243,7 +198,7 @@ const Form = () => {
                 <div className="relative">
                   <FontAwesomeIcon
                     icon={faIdCard}
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                   />
                   <input
                     type="text"
@@ -256,7 +211,6 @@ const Form = () => {
                 </div>
               </div>
 
-              {/* Género */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Género <span className="text-red-500">*</span>
@@ -264,7 +218,7 @@ const Form = () => {
                 <div className="relative">
                   <FontAwesomeIcon
                     icon={faVenusMars}
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                   />
                   <select
                     value={formData.genero}
@@ -282,14 +236,13 @@ const Form = () => {
             </div>
           </div>
 
-          {/* Información de Contacto */}
+          {/* ── Información de Contacto ── */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
             <div className="flex items-center gap-2 mb-6">
               <FontAwesomeIcon icon={faPhone} className="text-xl text-blue-500" />
               <h2 className="text-lg font-semibold text-gray-900">Información de Contacto</h2>
             </div>
 
-            {/* Teléfono */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Teléfono <span className="text-red-500">*</span>
@@ -297,7 +250,7 @@ const Form = () => {
               <div className="relative">
                 <FontAwesomeIcon
                   icon={faPhone}
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                 />
                 <input
                   type="tel"
@@ -310,7 +263,6 @@ const Form = () => {
               </div>
             </div>
 
-            {/* Dirección */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Dirección <span className="text-red-500">*</span>
@@ -332,7 +284,7 @@ const Form = () => {
             </div>
           </div>
 
-          {/* Sección de Preguntas de Prueba */}
+          {/* ── Prueba de Evaluación ── */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
             <div className="flex items-center gap-2 mb-6">
               <FontAwesomeIcon icon={faClipboardQuestion} className="text-xl text-blue-500" />
@@ -344,7 +296,6 @@ const Form = () => {
                 key={pregunta.pregunta_id}
                 className="mb-8 pb-6 border-b border-gray-200 last:border-b-0"
               >
-                {/* Enunciado de la pregunta */}
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-3">
                     {index + 1}. {pregunta.enunciado}
@@ -352,7 +303,6 @@ const Form = () => {
                   </label>
                 </div>
 
-                {/* Recurso Visual (Placeholder de imagen) */}
                 {pregunta.recurso_visual && (
                   <div className="mb-4">
                     <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-lg p-8 flex items-center justify-center">
@@ -365,9 +315,8 @@ const Form = () => {
                   </div>
                 )}
 
-                {/* Opciones de respuesta */}
                 <div className="space-y-2">
-                  {pregunta.opciones.map((opcion) => {
+                  {pregunta.opciones.map((opcion: Opcion) => {
                     const respuestaActual = respuestas.find(
                       (r) => r.pregunta_id === pregunta.pregunta_id
                     );
@@ -405,24 +354,18 @@ const Form = () => {
             ))}
           </div>
 
-          {/* Action Buttons */}
+          {/* ── Action Buttons ── */}
           <div className="flex justify-end gap-4">
-            <button
-              type="button"
-              onClick={handleSaveProgress}
-              className="px-6 py-3 bg-white text-gray-700 border border-gray-300 rounded-lg font-semibold text-sm hover:bg-gray-50 transition-colors"
-            >
-              Guardar Progreso
-            </button>
             <button
               type="submit"
               className="px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold text-sm hover:bg-blue-600 transition-colors shadow-md hover:shadow-lg flex items-center gap-2"
             >
               <span>✓</span>
-              <span>Registrar Paciente</span>
+              <span>Enviar Prueba</span>
             </button>
           </div>
         </form>
+        )}
 
         {/* Footer */}
         <div className="flex items-center justify-center gap-2 mt-8 text-gray-500 text-sm">

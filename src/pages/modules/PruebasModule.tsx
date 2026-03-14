@@ -1,0 +1,113 @@
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faStar,
+  faImage,
+  faPencilRuler,
+  faVideo,
+} from '@fortawesome/free-solid-svg-icons';
+import { obtenerPruebasRecientes } from '@/services/pruebasService';
+import { Prueba } from 'interfaces/prueba';
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+const getAppStyle = (tipo?: string) => {
+  switch (tipo) {
+    case 'curso':
+      return { icon: faImage,       color: 'bg-purple-100 text-purple-600' };
+    case 'evaluacion':
+      return { icon: faPencilRuler,  color: 'bg-orange-100 text-orange-600' };
+    case 'video':
+      return { icon: faVideo,        color: 'bg-pink-100 text-pink-600' };
+    default:
+      return { icon: faImage,        color: 'bg-gray-100 text-gray-600' };
+  }
+};
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+const PruebasModule = () => {
+  const navigate = useNavigate();
+  const token =
+    localStorage.getItem('access_token') ||
+    sessionStorage.getItem('access_token');
+
+  const [recentApps, setRecentApps] = useState<Prueba[]>([]);
+  const [loadingApps, setLoadingApps] = useState(true);
+
+  useEffect(() => {
+    if (!token) return;
+
+    const cargarPruebas = async () => {
+      try {
+        const data = await obtenerPruebasRecientes(token);
+        setRecentApps(data);
+      } catch (error) {
+        console.error('Error al cargar pruebas recientes', error);
+      } finally {
+        setLoadingApps(false);
+      }
+    };
+
+    cargarPruebas();
+  }, [token]);
+
+  return (
+    <div className="mb-8">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-xl font-bold text-gray-900">Resultados pruebas</h3>
+        <button className="text-sm text-purple-600 hover:text-purple-700 font-medium">
+          Ver Todas
+        </button>
+      </div>
+
+      {/* Content */}
+      {loadingApps ? (
+        <p className="text-gray-500 text-sm">Cargando resultados...</p>
+      ) : recentApps.length === 0 ? (
+        <p className="text-gray-400 text-sm">No hay pruebas recientes.</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {recentApps.map((app) => {
+            const style = getAppStyle(app.tipo);
+            return (
+              <div
+                key={app.id}
+                className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-shadow"
+              >
+                {/* Icon + Star */}
+                <div className="flex items-start justify-between mb-4">
+                  <div
+                    className={`w-12 h-12 ${style.color} rounded-lg flex items-center justify-center`}
+                  >
+                    <FontAwesomeIcon icon={style.icon} className="text-xl" />
+                  </div>
+                  <FontAwesomeIcon
+                    icon={faStar}
+                    className="text-gray-300 hover:text-yellow-400 cursor-pointer transition-colors"
+                  />
+                </div>
+
+                {/* Info */}
+                <h4 className="font-semibold text-gray-900 mb-1">{app.nombre}</h4>
+                <p className="text-sm text-gray-500 mb-4">{app.descripcion}</p>
+
+                {/* Action */}
+                <button
+                  onClick={() => navigate(`/pruebas/${app.id}`)}
+                  className="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-900 transition-colors"
+                >
+                  Abrir
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default PruebasModule;
