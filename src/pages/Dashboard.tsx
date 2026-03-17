@@ -1,13 +1,27 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faHome, faThLarge, faFile, faFolderOpen, faGraduationCap,faUsers, faBookOpen, faCog, faSearch, faBell, faUserCircle,faPlus, faDownload,} from '@fortawesome/free-solid-svg-icons';
+import {
+  faHome,
+  faThLarge,
+  faFile,
+  faFolderOpen,
+  faGraduationCap,
+  faUsers,
+  faBookOpen,
+  faCog,
+  faSearch,
+  faBell,
+  faUserCircle,
+  faPlus,
+  faDownload,
+} from '@fortawesome/free-solid-svg-icons';
 
-import HomeModule      from './modules/HomeModule';
-import PruebasModule   from './modules/PruebasModule';
-import FilesModule     from './modules/FilesModule';
-import ProjectsModule  from './modules/ProjectsModule';
-import LearnModule     from './modules/LearnModule';
+import HomeModule from './modules/HomeModule';
+import PruebasModule from './modules/PruebasModule';
+import ResultadosModule from './modules/ResultadosModule';
+import ProjectsModule from './modules/ProjectsModule';
+import LearnModule from './modules/LearnModule';
 import CommunityModule from './modules/CommunityModule';
 import ResourcesModule from './modules/ResourcesModule';
 
@@ -16,7 +30,7 @@ import ResourcesModule from './modules/ResourcesModule';
 type ModuleId =
   | 'home'
   | 'pruebas'
-  | 'files'
+  | 'Resultados'
   | 'projects'
   | 'learn'
   | 'community'
@@ -25,11 +39,11 @@ type ModuleId =
 // ─── Module registry ──────────────────────────────────────────────────────────
 
 const MODULES: Record<ModuleId, React.ReactNode> = {
-  home:      <HomeModule />,
-  pruebas:   <PruebasModule />,
-  files:     <FilesModule />,
-  projects:  <ProjectsModule />,
-  learn:     <LearnModule />,
+  home: <HomeModule />,
+  pruebas: <PruebasModule />,
+  Resultados: <ResultadosModule />,
+  projects: <ProjectsModule />,
+  learn: <LearnModule />,
   community: <CommunityModule />,
   resources: <ResourcesModule />,
 };
@@ -37,13 +51,13 @@ const MODULES: Record<ModuleId, React.ReactNode> = {
 // ─── Sidebar config ───────────────────────────────────────────────────────────
 
 const SIDEBAR_ITEMS: { id: ModuleId; icon: any; label: string; count?: number }[] = [
-  { id: 'home',      icon: faHome,          label: 'Home' },
-  { id: 'pruebas',   icon: faThLarge,       label: 'Pruebas' },
-  { id: 'files',     icon: faFile,          label: 'Files' },
-  { id: 'projects',  icon: faFolderOpen,    label: 'Projects' },
-  { id: 'learn',     icon: faGraduationCap, label: 'Learn' },
-  { id: 'community', icon: faUsers,         label: 'Community' },
-  { id: 'resources', icon: faBookOpen,      label: 'Resources' },
+  { id: 'home', icon: faHome, label: 'Home' },
+  { id: 'pruebas', icon: faThLarge, label: 'Pruebas' },
+  { id: 'Resultados', icon: faFile, label: 'Resultados' },
+  { id: 'projects', icon: faFolderOpen, label: 'Projects' },
+  { id: 'learn', icon: faGraduationCap, label: 'Learn' },
+  { id: 'community', icon: faUsers, label: 'Community' },
+  { id: 'resources', icon: faBookOpen, label: 'Resources' },
 ];
 
 // ─── Dashboard Shell ──────────────────────────────────────────────────────────
@@ -56,13 +70,12 @@ const Dashboard = () => {
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
-
       {/* ── Sidebar ── */}
       <aside className="w-56 bg-white border-r border-gray-200 flex flex-col">
         {/* Logo */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-linear-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-xl">E</span>
             </div>
             <div>
@@ -95,8 +108,8 @@ const Dashboard = () => {
               onClick={() => setActiveModule(item.id)}
               className={`w-full flex items-center justify-between px-3 py-2.5 mb-1 rounded-lg transition-all ${
                 activeModule === item.id
-                  ? 'bg-gray-100 text-gray-900 font-medium'
-                  : 'text-gray-600 hover:bg-gray-50'
+                  ? 'bg-purple-600 text-white font-semibold'
+                  : 'text-gray-600 hover:bg-purple-600 hover:text-white'
               }`}
             >
               <div className="flex items-center gap-3">
@@ -130,7 +143,6 @@ const Dashboard = () => {
 
       {/* ── Main Content ── */}
       <div className="flex-1 flex flex-col overflow-hidden">
-
         {/* Top Bar */}
         <header className="bg-white border-b border-gray-200">
           <div className="flex items-center justify-between px-6 py-3">
@@ -150,7 +162,7 @@ const Dashboard = () => {
                   <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white" />
                 </button>
               </div>
-              <div className="w-9 h-9 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-xs cursor-pointer hover:shadow-lg transition-shadow">
+              <div className="w-9 h-9 bg-linear-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-xs cursor-pointer hover:shadow-lg transition-shadow">
                 {user?.nombre?.charAt(0).toUpperCase() || 'JD'}
               </div>
             </div>
@@ -159,9 +171,7 @@ const Dashboard = () => {
 
         {/* Active Module */}
         <main className="flex-1 overflow-y-auto bg-gray-50">
-          <div className="p-8">
-            {MODULES[activeModule]}
-          </div>
+          <div className="p-8">{MODULES[activeModule]}</div>
         </main>
       </div>
     </div>

@@ -21,7 +21,26 @@ const CONDICIONES = [
     ],
     prevalencia: '1% en hombres',
     herencia: 'Ligada al cromosoma X',
-    simulacion: ['#C0392B → #1A1A1A', '#E74C3C → #2C2C2C', '#FF6B6B → #4A4A4A'],
+    simulacion: [
+      {
+        originalNombre: 'Rojo intenso',
+        originalHex: '#C0392B',
+        percibidoNombre: 'Negro',
+        percibidoHex: '#1A1A1A',
+      },
+      {
+        originalNombre: 'Rojo vivo',
+        originalHex: '#E74C3C',
+        percibidoNombre: 'Gris carbon',
+        percibidoHex: '#2C2C2C',
+      },
+      {
+        originalNombre: 'Rojo claro',
+        originalHex: '#FF6B6B',
+        percibidoNombre: 'Gris oscuro',
+        percibidoHex: '#4A4A4A',
+      },
+    ],
     gradiente: 'linear-gradient(135deg, #E85D75 0%, #C0392B 100%)',
   },
   {
@@ -42,7 +61,26 @@ const CONDICIONES = [
     ],
     prevalencia: '1% en hombres',
     herencia: 'Ligada al cromosoma X',
-    simulacion: ['#27AE60 → #A0A000', '#2ECC71 → #B8B800', '#55EFC4 → #D4D400'],
+    simulacion: [
+      {
+        originalNombre: 'Verde bosque',
+        originalHex: '#27AE60',
+        percibidoNombre: 'Amarillo oliva',
+        percibidoHex: '#A0A000',
+      },
+      {
+        originalNombre: 'Verde brillante',
+        originalHex: '#2ECC71',
+        percibidoNombre: 'Mostaza',
+        percibidoHex: '#B8B800',
+      },
+      {
+        originalNombre: 'Verde menta',
+        originalHex: '#55EFC4',
+        percibidoNombre: 'Amarillo verdoso',
+        percibidoHex: '#D4D400',
+      },
+    ],
     gradiente: 'linear-gradient(135deg, #27AE60 0%, #1E8449 100%)',
   },
   {
@@ -63,7 +101,26 @@ const CONDICIONES = [
     ],
     prevalencia: '0.01% en población general',
     herencia: 'Autosómica dominante (cromosoma 7)',
-    simulacion: ['#2980B9 → #2E8B57', '#3498DB → #3CB371', '#5DADE2 → #66CDAA'],
+    simulacion: [
+      {
+        originalNombre: 'Azul profundo',
+        originalHex: '#2980B9',
+        percibidoNombre: 'Verde mar',
+        percibidoHex: '#2E8B57',
+      },
+      {
+        originalNombre: 'Azul medio',
+        originalHex: '#3498DB',
+        percibidoNombre: 'Verde medio',
+        percibidoHex: '#3CB371',
+      },
+      {
+        originalNombre: 'Azul claro',
+        originalHex: '#5DADE2',
+        percibidoNombre: 'Turquesa suave',
+        percibidoHex: '#66CDAA',
+      },
+    ],
     gradiente: 'linear-gradient(135deg, #2980B9 0%, #1A5276 100%)',
   },
 ];
@@ -76,210 +133,243 @@ const LearnModule = () => {
   const condicionActiva = CONDICIONES.find((c) => c.id === activa);
 
   return (
-    <div className="bg-white rounded-xl p-8 border border-gray-200">
-    <div style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>
-
-      {/* Header */}
-      <div className="mb-10">
-        <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase mb-2"
-           style={{ fontFamily: 'system-ui' }}>
-          Centro de conocimiento
-        </p>
-        <h2 className="text-4xl font-bold text-gray-900 mb-3">
-          Tipos de Daltonismo
-        </h2>
-        <p className="text-gray-500 text-base max-w-xl" style={{ fontFamily: 'system-ui' }}>
-          Aprende sobre las tres condiciones que detecta nuestra plataforma: su origen,
-          síntomas y cómo afectan la percepción del color.
-        </p>
-      </div>
-
-      {/* Cards grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        {CONDICIONES.map((c) => (
-          <button
-            key={c.id}
-            onClick={() => setActiva(activa === c.id ? null : c.id)}
-            className="text-left rounded-2xl border-2 transition-all duration-300 overflow-hidden"
-            style={{
-              borderColor: activa === c.id ? c.color : '#E5E7EB',
-              background: activa === c.id ? c.colorLight : 'white',
-              transform: activa === c.id ? 'translateY(-2px)' : 'none',
-              boxShadow: activa === c.id
-                ? `0 8px 30px ${c.color}25`
-                : '0 1px 3px rgba(0,0,0,0.06)',
-            }}
+    <div className="rounded-2xl border border-gray-200 bg-[#F3F4F8] p-6 md:p-8">
+      <div
+        className="mx-auto max-w-6xl"
+        style={{ fontFamily: "'Segoe UI', 'Helvetica Neue', sans-serif" }}
+      >
+        {/* Header */}
+        <div className="mb-12">
+          <p
+            className="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-indigo-600"
+            style={{ fontFamily: 'system-ui' }}
           >
-            {/* top color band */}
-            <div className="h-2 w-full" style={{ background: c.gradiente }} />
+            Centro de conocimiento
+          </p>
+          <h2 className="mb-3 text-3xl font-extrabold leading-tight text-gray-900 md:text-4xl">
+            Tipos de Daltonismo
+          </h2>
+          <p
+            className="max-w-2xl text-base leading-relaxed text-gray-500 md:text-lg"
+            style={{ fontFamily: 'system-ui' }}
+          >
+            Aprende sobre las tres condiciones que detecta nuestra plataforma: su origen, síntomas y
+            cómo afectan la percepción del color.
+          </p>
+        </div>
 
-            <div className="p-6">
-              <div className="flex items-start justify-between mb-4">
+        {/* Cards grid */}
+        <div className="mb-10 grid grid-cols-1 gap-6 md:grid-cols-3">
+          {CONDICIONES.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => setActiva(activa === c.id ? null : c.id)}
+              className="group overflow-hidden rounded-2xl border bg-white p-7 text-left transition-all duration-300"
+              style={{
+                borderColor: activa === c.id ? c.color : '#E7E8EF',
+                transform: activa === c.id ? 'translateY(-4px)' : 'none',
+                boxShadow:
+                  activa === c.id
+                    ? `0 14px 28px -10px ${c.color}55`
+                    : '0 4px 14px -8px rgba(22, 25, 40, 0.18)',
+              }}
+            >
+              <div className="mb-6 flex items-start justify-between">
                 <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
-                  style={{ background: c.colorMid }}
+                  className="flex h-14 w-14 items-center justify-center rounded-full text-2xl text-white"
+                  style={{ background: c.gradiente }}
                 >
-                  {c.icon}
+                  <span className="drop-shadow-sm">{c.icon}</span>
                 </div>
                 <span
-                  className="text-xs font-semibold px-2.5 py-1 rounded-full"
-                  style={{ background: c.colorMid, color: c.color, fontFamily: 'system-ui' }}
+                  className="rounded-full px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide"
+                  style={{ background: c.colorMid, color: '#5347C6', fontFamily: 'system-ui' }}
                 >
                   {c.prevalencia}
                 </span>
               </div>
 
-              <h3 className="text-xl font-bold text-gray-900 mb-1">{c.nombre}</h3>
-              <p className="text-xs text-gray-400 mb-3 uppercase tracking-wide"
-                 style={{ fontFamily: 'system-ui' }}>
+              <h3 className="mb-2 text-4xl font-extrabold text-gray-900 md:text-3xl">{c.nombre}</h3>
+              <p
+                className="mb-4 text-xs uppercase tracking-wide text-gray-400"
+                style={{ fontFamily: 'system-ui' }}
+              >
                 {c.subtitulo}
               </p>
-              <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed"
-                 style={{ fontFamily: 'system-ui' }}>
+              <p
+                className="line-clamp-5 min-h-32 text-sm leading-8 text-gray-600"
+                style={{ fontFamily: 'system-ui' }}
+              >
                 {c.descripcion}
               </p>
 
               <div
-                className="mt-4 text-xs font-semibold flex items-center gap-1"
-                style={{ color: c.color, fontFamily: 'system-ui' }}
+                className="mt-6 inline-flex items-center gap-2 text-sm font-bold"
+                style={{ color: '#4F46E5', fontFamily: 'system-ui' }}
               >
-                {activa === c.id ? '▲ Cerrar' : '▼ Ver más'}
+                {activa === c.id ? 'Ver menos' : 'Ver más'}
+                <span className="text-lg leading-none">→</span>
               </div>
-            </div>
-          </button>
-        ))}
-      </div>
-
-      {/* Detail panel */}
-      {condicionActiva && (
-        <div
-          className="rounded-2xl border-2 overflow-hidden"
-          style={{ borderColor: condicionActiva.color, background: condicionActiva.colorLight }}
-        >
-          {/* Panel header */}
-          <div
-            className="px-8 py-6 flex items-center gap-4"
-            style={{ background: condicionActiva.gradiente }}
-          >
-            <span className="text-4xl">{condicionActiva.icon}</span>
-            <div>
-              <h3 className="text-2xl font-bold text-white">{condicionActiva.nombre}</h3>
-              <p className="text-white/70 text-sm" style={{ fontFamily: 'system-ui' }}>
-                {condicionActiva.subtitulo}
-              </p>
-            </div>
-          </div>
-
-          <div className="p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-            {/* Descripción + síntomas */}
-            <div className="lg:col-span-2">
-              <h4
-                className="text-xs font-bold uppercase tracking-widest mb-3"
-                style={{ color: condicionActiva.color, fontFamily: 'system-ui' }}
-              >
-                ¿Qué es?
-              </h4>
-              <p className="text-gray-700 leading-relaxed text-base mb-6"
-                 style={{ fontFamily: 'system-ui' }}>
-                {condicionActiva.descripcion}
-              </p>
-
-              <h4
-                className="text-xs font-bold uppercase tracking-widest mb-3"
-                style={{ color: condicionActiva.color, fontFamily: 'system-ui' }}
-              >
-                Síntomas principales
-              </h4>
-              <ul className="space-y-2" style={{ fontFamily: 'system-ui' }}>
-                {condicionActiva.sintomas.map((s, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm text-gray-700">
-                    <span
-                      className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs flex-shrink-0 mt-0.5"
-                      style={{ background: condicionActiva.color }}
-                    >
-                      ✓
-                    </span>
-                    {s}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Info lateral */}
-            <div className="space-y-5">
-              {/* Datos clínicos */}
-              <div
-                className="rounded-xl p-5 border"
-                style={{ background: 'white', borderColor: condicionActiva.colorMid }}
-              >
-                <h4
-                  className="text-xs font-bold uppercase tracking-widest mb-4"
-                  style={{ color: condicionActiva.color, fontFamily: 'system-ui' }}
-                >
-                  Datos clínicos
-                </h4>
-                <div className="space-y-3" style={{ fontFamily: 'system-ui' }}>
-                  <div>
-                    <p className="text-xs text-gray-400 mb-0.5">Prevalencia</p>
-                    <p className="text-sm font-semibold text-gray-800">{condicionActiva.prevalencia}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-400 mb-0.5">Herencia</p>
-                    <p className="text-sm font-semibold text-gray-800">{condicionActiva.herencia}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-400 mb-0.5">Cono afectado</p>
-                    <p className="text-sm font-semibold text-gray-800">{condicionActiva.subtitulo}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Simulación */}
-              <div
-                className="rounded-xl p-5 border"
-                style={{ background: 'white', borderColor: condicionActiva.colorMid }}
-              >
-                <h4
-                  className="text-xs font-bold uppercase tracking-widest mb-4"
-                  style={{ color: condicionActiva.color, fontFamily: 'system-ui' }}
-                >
-                  Cómo se ven los colores
-                </h4>
-                <div className="space-y-3" style={{ fontFamily: 'system-ui' }}>
-                  {condicionActiva.simulacion.map((sim, i) => {
-                    const [desde, hasta] = sim.split(' → ');
-                    return (
-                      <div key={i} className="flex items-center gap-2 text-xs text-gray-500">
-                        <span
-                          className="w-6 h-6 rounded-md flex-shrink-0 border border-gray-200"
-                          style={{ background: desde }}
-                        />
-                        <span className="text-gray-300">→</span>
-                        <span
-                          className="w-6 h-6 rounded-md flex-shrink-0 border border-gray-200"
-                          style={{ background: hasta }}
-                        />
-                        <span>
-                          <span className="font-mono">{desde}</span>
-                          <span className="text-gray-400"> percibido como </span>
-                          <span className="font-mono">{hasta}</span>
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
+            </button>
+          ))}
         </div>
-      )}
-    </div>
 
+        {/* Detail panel */}
+        {condicionActiva && (
+          <div
+            className="overflow-hidden rounded-2xl border bg-white shadow-sm"
+            style={{ borderColor: condicionActiva.colorMid }}
+          >
+            <div className="border-b border-gray-100 bg-[#F7F8FC] px-6 py-6 md:px-8">
+              <div className="flex flex-wrap items-center gap-4">
+                <div
+                  className="flex h-12 w-12 items-center justify-center rounded-full text-2xl text-white"
+                  style={{ background: condicionActiva.gradiente }}
+                >
+                  {condicionActiva.icon}
+                </div>
+                <div>
+                  <h3 className="text-2xl font-extrabold text-gray-900">
+                    {condicionActiva.nombre}
+                  </h3>
+                  <p className="text-sm text-gray-500" style={{ fontFamily: 'system-ui' }}>
+                    {condicionActiva.subtitulo}
+                  </p>
+                </div>
+                <span
+                  className="ml-auto rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide"
+                  style={{
+                    background: condicionActiva.colorMid,
+                    color: '#5347C6',
+                    fontFamily: 'system-ui',
+                  }}
+                >
+                  {condicionActiva.prevalencia}
+                </span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 p-6 md:p-8 lg:grid-cols-3">
+              <div className="rounded-xl border border-gray-100 bg-white p-6 lg:col-span-2">
+                <h4
+                  className="mb-3 text-xs font-bold uppercase tracking-[0.2em]"
+                  style={{ color: '#4F46E5', fontFamily: 'system-ui' }}
+                >
+                  ¿Qué es?
+                </h4>
+                <p
+                  className="mb-7 text-sm leading-7 text-gray-700"
+                  style={{ fontFamily: 'system-ui' }}
+                >
+                  {condicionActiva.descripcion}
+                </p>
+
+                <h4
+                  className="mb-3 text-xs font-bold uppercase tracking-[0.2em]"
+                  style={{ color: '#4F46E5', fontFamily: 'system-ui' }}
+                >
+                  Síntomas principales
+                </h4>
+                <ul className="space-y-3" style={{ fontFamily: 'system-ui' }}>
+                  {condicionActiva.sintomas.map((s, i) => (
+                    <li key={i} className="flex items-start gap-3 text-sm text-gray-700">
+                      <span
+                        className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs text-white"
+                        style={{ background: '#4F46E5' }}
+                      >
+                        ✓
+                      </span>
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="space-y-5">
+                <div className="rounded-xl border border-gray-100 bg-white p-5">
+                  <h4
+                    className="mb-4 text-xs font-bold uppercase tracking-widest"
+                    style={{ color: '#4F46E5', fontFamily: 'system-ui' }}
+                  >
+                    Datos clínicos
+                  </h4>
+                  <div className="space-y-3" style={{ fontFamily: 'system-ui' }}>
+                    <div>
+                      <p className="mb-0.5 text-xs text-gray-400">Prevalencia</p>
+                      <p className="text-sm font-semibold text-gray-800">
+                        {condicionActiva.prevalencia}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="mb-0.5 text-xs text-gray-400">Herencia</p>
+                      <p className="text-sm font-semibold text-gray-800">
+                        {condicionActiva.herencia}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="mb-0.5 text-xs text-gray-400">Cono afectado</p>
+                      <p className="text-sm font-semibold text-gray-800">
+                        {condicionActiva.subtitulo}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-gray-100 bg-white p-5">
+                  <h4
+                    className="mb-4 text-xs font-bold uppercase tracking-widest"
+                    style={{ color: '#4F46E5', fontFamily: 'system-ui' }}
+                  >
+                    Cómo se ven los colores
+                  </h4>
+                  <div className="space-y-3" style={{ fontFamily: 'system-ui' }}>
+                    {condicionActiva.simulacion.map((par, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center justify-between gap-3 rounded-lg border border-gray-100 bg-gray-50 p-3"
+                      >
+                        <div className="min-w-0">
+                          <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                            Original
+                          </p>
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="h-3 w-3 shrink-0 rounded-full border border-gray-300"
+                              style={{ backgroundColor: par.originalHex }}
+                            />
+                            <span className="truncate text-xs font-medium text-gray-700">
+                              {par.originalNombre}
+                            </span>
+                          </div>
+                        </div>
+
+                        <span className="text-gray-300">→</span>
+
+                        <div className="min-w-0 text-right">
+                          <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                            Percibido
+                          </p>
+                          <div className="flex items-center justify-end gap-2">
+                            <span className="truncate text-xs font-medium text-gray-700">
+                              {par.percibidoNombre}
+                            </span>
+                            <span
+                              className="h-3 w-3 shrink-0 rounded-full border border-gray-300"
+                              style={{ backgroundColor: par.percibidoHex }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
 export default LearnModule;
-
-
