@@ -2,22 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faUser,
-  faIdCard,
-  faPhone,
-  faMapMarkerAlt,
-  faVenusMars,
-  faLock,
-  faClipboardQuestion,
-  faImage,
-} from '@fortawesome/free-solid-svg-icons';
-import {
-  FormDataPruebaProta,
-  Pregunta,
-  Opcion,
-  Respuesta,
-} from 'interfaces/FormDataPruebaProta';
+import {faUser,faIdCard,faPhone,faMapMarkerAlt,faVenusMars,faLock,faClipboardQuestion,faImage,} from '@fortawesome/free-solid-svg-icons';
+import {FormDataPruebaProta,Pregunta,Opcion,Respuesta,} from 'interfaces/FormDataPruebaProta';
+import Swal from 'sweetalert2';
 
 const Form = () => {
   const { id } = useParams<{ id: string }>();
@@ -43,84 +30,164 @@ const Form = () => {
 
   // ── Cargar preguntas desde la API ──────────────────────────────────────────
   useEffect(() => {
-    if (!id || !token) return;
+  if (!id || !token) return;
 
-    const cargar = async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:8000/api/pruebas/${id}/`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setPreguntas(res.data.preguntas);
-        setNombrePrueba(res.data.nombre_prueba);
-      } catch (err) {
-        setErrorForm('No se pudieron cargar las preguntas de la prueba.');
-        console.error(err);
-      } finally {
-        setLoadingForm(false);
-      }
-    };
-
-    cargar();
-  }, [id, token]);
-
-  const handleInputChange = (field: keyof FormDataPruebaProta, value: string) => {
-    setFormData({ ...formData, [field]: value });
-  };
-
-  const handleRespuestaChange = (
-    pregunta_id: number,
-    opcion_id: number,
-    valor_opcion: string
-  ) => {
-    const nuevasRespuestas = respuestas.filter((r) => r.pregunta_id !== pregunta_id);
-    nuevasRespuestas.push({ pregunta_id, opcion_id, valor_respuesta: valor_opcion });
-    setRespuestas(nuevasRespuestas);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const preguntasObligatorias = preguntas.filter((p) => p.obligatoria);
-    const respuestasObligatorias = respuestas.filter((r) =>
-      preguntasObligatorias.some((p) => p.pregunta_id === r.pregunta_id)
-    );
-
-    if (respuestasObligatorias.length < preguntasObligatorias.length) {
-      alert('Por favor responda todas las preguntas obligatorias.');
-      return;
-    }
-
-    const payload = {
-      paciente: {
-        nombres:               formData.nombres,
-        apellidos:             formData.apellidos,
-        numero_identificacion: formData.numero_identificacion,
-        telefono:              formData.telefono,
-        direccion:             formData.direccion,
-        genero:                formData.genero,
-        fecha_registro:        new Date().toISOString(),
-      },
-      respuestas: respuestas.map((r) => ({
-        pregunta_id:            r.pregunta_id,
-        opcion_seleccionada_id: r.opcion_id,
-        valor_respuesta:        r.valor_respuesta,
-        fecha_respuesta:        new Date().toISOString(),
-      })),
-    };
-
+  const cargar = async () => {
     try {
-      await axios.post(
-        `http://localhost:8000/api/pruebas/${id}/registrar/`,
-        payload,
+      const res = await axios.get(
+        `http://localhost:8000/api/pruebas/${id}/`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert('¡Prueba enviada correctamente!');
+
+      setPreguntas(res.data.preguntas);
+      setNombrePrueba(res.data.nombre_prueba);
+
     } catch (err) {
+      setErrorForm('No se pudieron cargar las preguntas de la prueba.');
       console.error(err);
-      alert('Ocurrió un error al enviar la prueba. Intenta de nuevo.');
+    } finally {
+      setLoadingForm(false);
     }
   };
+
+  cargar();
+}, [id, token]);
+
+// ─────────────────────────────────────────
+
+const handleInputChange = (
+  field: keyof FormDataPruebaProta,
+  value: string
+) => {
+  setFormData({ ...formData, [field]: value });
+};
+
+// ─────────────────────────────────────────
+
+const handleRespuestaChange = (
+  pregunta_id: number,
+  opcion_id: number,
+  valor_opcion: string
+) => {
+  setRespuestas((prev) => [
+    ...prev.filter((r) => r.pregunta_id !== pregunta_id),
+    { pregunta_id, opcion_id, valor_respuesta: valor_opcion },
+  ]);
+};
+
+// ─────────────────────────────────────────
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  const preguntasObligatorias = preguntas.filter((p) => p.obligatoria);
+
+  const respuestasObligatorias = respuestas.filter((r) =>
+    preguntasObligatorias.some((p) => p.pregunta_id === r.pregunta_id)
+  );
+
+  if (respuestasObligatorias.length < preguntasObligatorias.length) {
+    Swal.fire({
+      title: 'Faltan respuestas',
+      text: 'Por favor responda todas las preguntas obligatorias.',
+      icon: 'warning'
+    });
+    return;
+  }
+
+  const payload = {
+    paciente: {
+      nombres:               formData.nombres,
+      apellidos:             formData.apellidos,
+      numero_identificacion: formData.numero_identificacion,
+      telefono:              formData.telefono,
+      direccion:             formData.direccion,
+      genero:                formData.genero,
+      fecha_registro:        new Date().toISOString(),
+    },
+    respuestas: respuestas.map((r) => ({
+      pregunta_id:            r.pregunta_id,
+      opcion_seleccionada_id: r.opcion_id,
+      valor_respuesta:        r.valor_respuesta,
+      fecha_respuesta:        new Date().toISOString(),
+    })),
+  };
+
+  try {
+    await axios.post(
+      `http://localhost:8000/api/pruebas/${id}/registrar/`,
+      payload,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    // CALCULAR RESULTADO USANDO PUNTAJE REAL
+    let puntajeTotal = 0;
+    let puntajeMaximo = 0;
+
+    preguntas.forEach((pregunta) => {
+      const respuestaUsuario = respuestas.find(
+        (r) => Number(r.pregunta_id) === Number(pregunta.pregunta_id)
+      );
+
+      const maxPregunta = Math.max(
+        ...pregunta.opciones.map((o) => o.puntaje || 0)
+      );
+      puntajeMaximo += maxPregunta;
+
+      if (respuestaUsuario) {
+        const opcionSeleccionada = pregunta.opciones.find(
+          (o) =>
+            Number(o.opcion_id) === Number(respuestaUsuario.opcion_id)
+        );
+
+        if (opcionSeleccionada?.puntaje !== undefined) {
+          puntajeTotal += opcionSeleccionada.puntaje;
+        }
+      }
+    });
+
+    const porcentaje =
+      puntajeMaximo > 0 ? (puntajeTotal / puntajeMaximo) * 100 : 0;
+
+    
+    let diagnostico = '';
+
+    if (porcentaje === 0) {
+      diagnostico = 'Visión normal';
+    } else if (porcentaje <= 30) {
+      diagnostico = 'Leve dificultad';
+    } else if (porcentaje <= 60) {
+      diagnostico = 'Deficiencia moderada';
+    } else {
+      diagnostico = 'Alta probabilidad de protanopia';
+    }
+
+    // 🎨 RESULTADO
+    Swal.fire({
+      title: 'Resultado de la prueba',
+      icon: 'success',
+      html: `
+        <div style="text-align:left">
+          <p><strong>Puntaje:</strong> ${puntajeTotal} / ${puntajeMaximo}</p>
+          <p><strong>Porcentaje:</strong> ${porcentaje.toFixed(0)}%</p>
+          <p><strong>Diagnóstico:</strong> ${diagnostico}</p>
+        </div>
+      `,
+      confirmButtonText: 'Aceptar',
+      draggable: true
+    });
+
+  } catch (err) {
+    console.error(err);
+
+    Swal.fire({
+      title: 'Error',
+      text: 'Ocurrió un error al enviar la prueba.',
+      icon: 'error'
+    });
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gray-50">

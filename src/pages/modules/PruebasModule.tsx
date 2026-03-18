@@ -54,6 +54,7 @@ const PruebasModule = () => {
   }, [token]);
 
   return (
+    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:p-8">
     <div className="mb-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
@@ -106,6 +107,7 @@ const PruebasModule = () => {
           })}
         </div>
       )}
+    </div>
     </div>
   );
 };

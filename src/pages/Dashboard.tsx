@@ -1,21 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faHome,
-  faThLarge,
-  faFile,
-  faFolderOpen,
-  faGraduationCap,
-  faUsers,
-  faBookOpen,
-  faCog,
-  faSearch,
-  faBell,
-  faUserCircle,
-  faPlus,
-  faDownload,
-} from '@fortawesome/free-solid-svg-icons';
+import {faHome,faThLarge,faFile,faFolderOpen,faGraduationCap,faUsers,faBookOpen,faCog,faSearch,faUserCircle} from '@fortawesome/free-solid-svg-icons';
 
 import HomeModule from './modules/HomeModule';
 import PruebasModule from './modules/PruebasModule';
@@ -148,19 +134,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between px-6 py-3">
             <h2 className="text-sm font-semibold text-gray-700">{currentLabel}</h2>
             <div className="flex items-center gap-3">
-              <button className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg transition-colors flex items-center gap-2">
-                <FontAwesomeIcon icon={faDownload} className="text-xs" />
-                Instalar App
-              </button>
-              <button className="px-4 py-2 text-sm font-medium bg-black text-white hover:bg-gray-800 rounded-lg transition-colors flex items-center gap-2">
-                <FontAwesomeIcon icon={faPlus} className="text-xs" />
-                Nuevo Proyecto
-              </button>
               <div className="relative">
-                <button className="w-9 h-9 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors">
-                  <FontAwesomeIcon icon={faBell} className="text-gray-600 text-sm" />
-                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white" />
-                </button>
               </div>
               <div className="w-9 h-9 bg-linear-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-xs cursor-pointer hover:shadow-lg transition-shadow">
                 {user?.nombre?.charAt(0).toUpperCase() || 'JD'}

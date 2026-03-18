@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faImage,faPencilRuler,faVideo,faStar,} from '@fortawesome/free-solid-svg-icons';
+import {faImage,faPencilRuler,faVideo} from '@fortawesome/free-solid-svg-icons';
 import { obtenerPruebasRecientes } from '@/services/pruebasService';
 import { Prueba } from 'interfaces/prueba';
 
@@ -76,7 +76,7 @@ const HomeModule = () => {
       </div>
 
       {/* Recent Apps */}
-      <div className="mb-8">
+      {/* <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold text-gray-900">Resultados pruebas</h3>
           <button className="text-sm text-purple-600 hover:text-purple-700 font-medium">
@@ -113,7 +113,7 @@ const HomeModule = () => {
             })}
           </div>
         )}
-      </div>
+      </div> */}
 
       {/* Recent Files & Active Projects */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

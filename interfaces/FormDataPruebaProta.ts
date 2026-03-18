@@ -11,6 +11,7 @@ export interface Opcion {
   opcion_id: number;
   texto_opcion: string;
   valor_opcion: string;
+  puntaje: number;
 }
 
 export interface Pregunta {

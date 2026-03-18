@@ -133,7 +133,7 @@ const LearnModule = () => {
   const condicionActiva = CONDICIONES.find((c) => c.id === activa);
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-[#F3F4F8] p-6 md:p-8">
+    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:p-8">
       <div
         className="mx-auto max-w-6xl"
         style={{ fontFamily: "'Segoe UI', 'Helvetica Neue', sans-serif" }}
