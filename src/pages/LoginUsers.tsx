@@ -3,7 +3,7 @@ import { MagicMotion } from 'react-magic-motion';
 import loginImage from '../assets/imagen.jpg';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { loginAdministrador } from '../services/authService';
+import { loginCliente } from '../services/authService';
 import { FormData } from 'interfaces/FormData';
 
 const Login = () => {
@@ -34,7 +34,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const userData = await loginAdministrador(
+      const userData = await loginCliente(
         formData.username,
         formData.password,
         formData.keepLoggedIn
@@ -43,7 +43,7 @@ const Login = () => {
       login(userData);
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.message || 'username o contraseña incorrectos');
+      setError(err.message || 'Usuario o contraseña incorrectos');
     } finally {
       setLoading(false);
     }
@@ -59,9 +59,9 @@ const Login = () => {
         />
 
         <div className="relative z-10 flex flex-col justify-end p-12 text-white">
-          <h1 className="text-4xl font-bold mb-4">Portal de Gestión</h1>
+          <h1 className="text-4xl font-bold mb-4">Portal de Clientes</h1>
           <p className="text-lg text-gray-300 max-w-md">
-            Administra los resultados con precisión y seguridad.
+            Accede a tus pruebas y consulta tus resultados de forma segura.
           </p>
         </div>
 
@@ -90,7 +90,7 @@ const Login = () => {
                 />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">EDUNEE ADMIN</h2>
+            <h2 className="text-2xl font-bold text-gray-900">EDUNEE CLIENTES</h2>
           </div>
 
           {/* Card */}
@@ -98,7 +98,7 @@ const Login = () => {
             <div className="mb-6">
               <h3 className="text-2xl font-bold text-gray-900 mb-2">Bienvenido de Nuevo</h3>
               <p className="text-gray-600 text-sm">
-                Por favor ingresa tus credenciales administrativas para continuar.
+                Por favor ingresa tus credenciales de cliente para continuar.
               </p>
             </div>
 
@@ -106,11 +106,13 @@ const Login = () => {
               <form onSubmit={handleSubmit} className="space-y-5">
                 {/* username */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Usuario</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Nombre de Usuario
+                  </label>
                   <input
                     type="text"
                     name="username"
-                    placeholder="admin"
+                    placeholder="usuario"
                     value={formData.username}
                     onChange={handleChange}
                     required
@@ -154,6 +156,14 @@ const Login = () => {
                   className="w-full py-3.5 px-4 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition-all duration-300 disabled:opacity-60"
                 >
                   {loading ? 'Iniciando sesión...' : 'INICIAR SESIÓN'}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigate('/register-users')}
+                  className="w-full py-3.5 px-4 text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg font-semibold transition-all duration-300"
+                >
+                  REGISTRO
                 </button>
               </form>
             </MagicMotion>

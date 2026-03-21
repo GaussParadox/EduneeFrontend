@@ -372,7 +372,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
                 {pregunta.recurso_visual && (
                   <div className="mb-4">
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-lg p-8 flex items-center justify-center">
+                    <div className="bg-linear-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-lg p-8 flex items-center justify-center">
                       <div className="text-center">
                         <FontAwesomeIcon icon={faImage} className="text-4xl text-blue-400 mb-3" />
                         <p className="text-blue-700 font-semibold">{pregunta.recurso_visual}</p>

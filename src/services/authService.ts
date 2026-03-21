@@ -6,10 +6,7 @@ export const loginAdministrador = async (
   keepLoggedIn: boolean = false
 ) => {
   try {
-    const response = await axios.post(
-      'http://localhost:8000/api/login/',
-      { username, password } 
-    );
+    const response = await axios.post('http://localhost:8000/api/login/', { username, password });
 
     const data = response.data;
 
@@ -33,11 +30,17 @@ export const loginAdministrador = async (
   } catch (error: any) {
     if (error.response) {
       throw new Error(
-        error.response.data?.detail ||
-        error.response.data?.error ||
-        'Error de autenticación'
+        error.response.data?.detail || error.response.data?.error || 'Error de autenticación'
       );
     }
     throw error;
   }
+};
+
+export const loginCliente = async (
+  username: string,
+  password: string,
+  keepLoggedIn: boolean = false
+) => {
+  return loginAdministrador(username, password, keepLoggedIn);
 };
