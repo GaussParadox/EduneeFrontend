@@ -31,14 +31,12 @@ const PruebasModule = () => {
   const [loadingApps, setLoadingApps] = useState(true);
 
   useEffect(() => {
-    // ← Obtén el token DENTRO del useEffect
+  
     const token = localStorage.getItem('paciente_token');
     
-    console.log('Token actual:', token?.substring(0, 20) + '...');
-    console.log('Paciente ID:', paciente?.paciente_id);
 
     if (!token) {
-      console.log('⚠️ Sin token');
+      
       setLoadingApps(false);
       return;
     }
@@ -48,7 +46,6 @@ const PruebasModule = () => {
         const data = await obtenerPruebasRecientes(token, paciente?.paciente_id);
         setRecentApps(data);
       } catch (error) {
-        console.error('❌ Error al cargar pruebas recientes', error);
       } finally {
         setLoadingApps(false);
       }
