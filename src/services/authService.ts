@@ -11,10 +11,11 @@ export const loginAdministrador = async (
     const data = response.data;
 
     const userData = {
-      id: data.administrador_id,
-      name: data.username,
-      token: data.access,
-    };
+  id:    data.administrador_id,
+  name:  data.username,
+  token: data.access,
+  rol:   'admin' as const,
+};
 
     if (keepLoggedIn) {
       localStorage.setItem('access_token', data.access);

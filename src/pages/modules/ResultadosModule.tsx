@@ -135,9 +135,9 @@ const ResultadosModule = () => {
         <table className="w-full border-separate border-spacing-0">
           <thead>
             <tr className="text-left text-xs font-bold uppercase tracking-wide text-gray-500">
-              <th className="border-b border-gray-200 pb-4 pr-4">Número de prueba</th>
               <th className="border-b border-gray-200 pb-4 pr-4">Prueba</th>
-              <th className="border-b border-gray-200 pb-4 pr-4">Nombre del paciente</th>
+              <th className="border-b border-gray-200 pb-4 pr-4">Tipo prueba</th>
+              <th className="border-b border-gray-200 pb-4 pr-4">Nombre paciente</th>
               <th className="border-b border-gray-200 pb-4 pr-4">ID del paciente</th>
               <th className="border-b border-gray-200 pb-4 pr-4">Nombre de la prueba</th>
               <th className="border-b border-gray-200 pb-4">Fecha de registro</th>
