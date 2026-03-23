@@ -2,23 +2,12 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { usePacienteAuth } from '../../context/Pacienteauthcontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faImage,faPencilRuler,faVideo,faStar} from '@fortawesome/free-solid-svg-icons';
+import {faImage} from '@fortawesome/free-solid-svg-icons';
 
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const getAppStyle = (tipo?: string) => {
-  switch (tipo) {
-    case 'curso':
-      return { icon: faImage,       color: 'bg-purple-100 text-purple-600' };
-    case 'evaluacion':
-      return { icon: faPencilRuler,  color: 'bg-orange-100 text-orange-600' };
-    case 'video':
-      return { icon: faVideo,        color: 'bg-pink-100 text-pink-600' };
-    default:
-      return { icon: faImage,        color: 'bg-gray-100 text-gray-600' };
-  }
-};
+
 
 // ─── Component ────────────────────────────────────────────────────────────────
 

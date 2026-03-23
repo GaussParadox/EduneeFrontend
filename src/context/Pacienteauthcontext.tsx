@@ -35,10 +35,10 @@ export const PacienteAuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = (data: PacienteSession) => {
-    localStorage.setItem('paciente_session', JSON.stringify(data));
-    localStorage.setItem('paciente_token', data.access);
-    setPaciente(data);
-  };
+  localStorage.setItem('paciente_token', data.access); // ← Primero el token
+  localStorage.setItem('paciente_session', JSON.stringify(data)); // ← Luego la sesión
+  setPaciente(data);
+};
 
   const logout = () => {
     localStorage.removeItem('paciente_session');

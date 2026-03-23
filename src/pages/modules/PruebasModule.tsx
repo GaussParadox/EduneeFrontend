@@ -11,8 +11,6 @@ import {
 import { obtenerPruebasRecientes } from '@/services/pruebasService';
 import { Prueba } from 'interfaces/prueba';
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
 const getAppStyle = (tipo?: string) => {
   switch (tipo) {
     case 'curso':
@@ -26,41 +24,42 @@ const getAppStyle = (tipo?: string) => {
   }
 };
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 const PruebasModule = () => {
   const navigate = useNavigate();
   const { paciente } = usePacienteAuth();
-  const token =
-    localStorage.getItem('access_token') ||
-    sessionStorage.getItem('access_token') ||
-    localStorage.getItem('paciente_token') ||
-    sessionStorage.getItem('paciente_token');
-
   const [recentApps, setRecentApps] = useState<Prueba[]>([]);
   const [loadingApps, setLoadingApps] = useState(true);
 
   useEffect(() => {
-    if (!token) return;
+    // ← Obtén el token DENTRO del useEffect
+    const token = localStorage.getItem('paciente_token');
+    
+    console.log('Token actual:', token?.substring(0, 20) + '...');
+    console.log('Paciente ID:', paciente?.paciente_id);
+
+    if (!token) {
+      console.log('⚠️ Sin token');
+      setLoadingApps(false);
+      return;
+    }
 
     const cargarPruebas = async () => {
       try {
         const data = await obtenerPruebasRecientes(token, paciente?.paciente_id);
         setRecentApps(data);
       } catch (error) {
-        console.error('Error al cargar pruebas recientes', error);
+        console.error('❌ Error al cargar pruebas recientes', error);
       } finally {
         setLoadingApps(false);
       }
     };
 
     cargarPruebas();
-  }, [token]);
+  }, [paciente?.paciente_id]); // ← Depende solo de paciente_id
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:p-8">
     <div className="mb-8">
-      {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xl font-bold text-gray-900">Resultados pruebas</h3>
         <button className="text-sm text-purple-600 hover:text-purple-700 font-medium">
@@ -68,7 +67,6 @@ const PruebasModule = () => {
         </button>
       </div>
 
-      {/* Content */}
       {loadingApps ? (
         <p className="text-gray-500 text-sm">Cargando resultados...</p>
       ) : recentApps.length === 0 ? (
@@ -82,7 +80,6 @@ const PruebasModule = () => {
                 key={app.id}
                 className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-shadow"
               >
-                {/* Icon + Star */}
                 <div className="flex items-start justify-between mb-4">
                   <div
                     className={`w-12 h-12 ${style.color} rounded-lg flex items-center justify-center`}
@@ -95,11 +92,9 @@ const PruebasModule = () => {
                   />
                 </div>
 
-                {/* Info */}
                 <h4 className="font-semibold text-gray-900 mb-1">{app.nombre}</h4>
                 <p className="text-sm text-gray-500 mb-4">{app.descripcion}</p>
 
-                {/* Action */}
                 <button
                   onClick={() => navigate(`/pruebas/${app.id}`)}
                   className="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-900 transition-colors"
