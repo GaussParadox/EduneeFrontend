@@ -19,7 +19,9 @@ const ITEMS_POR_PAGINA = 10;
 const ResultadosModule = () => {
   const token =
     localStorage.getItem('access_token') ||
-    sessionStorage.getItem('access_token');
+    sessionStorage.getItem('access_token') ||
+    localStorage.getItem('paciente_token') ||
+    sessionStorage.getItem('paciente_token');
 
   const [sesiones, setSesiones] = useState<Sesion[]>([]);
   const [loading, setLoading]   = useState(true);

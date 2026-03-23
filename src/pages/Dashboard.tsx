@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { usePacienteAuth } from '../context/Pacienteauthcontext';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faHome, faThLarge, faFile, faFolderOpen, faGraduationCap,
-  faUsers, faBookOpen, faCog, faSearch, faBell, faUserCircle,
-  faPlus, faDownload, faClipboardList, faSignOutAlt,
+  faHome, faThLarge, faFolderOpen, faGraduationCap,
+  faUsers, faBookOpen, faSearch, faBell,
+  faClipboardList, faSignOutAlt,
 } from '@fortawesome/free-solid-svg-icons';
 
 import HomeModule       from './modules/HomeModule';
@@ -55,20 +56,31 @@ const SIDEBAR_ITEMS: { id: ModuleId; icon: any; label: string; roles: ('admin' |
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
+  const { paciente, logout: logoutPaciente } = usePacienteAuth();
   const navigate = useNavigate();
   const [activeModule, setActiveModule] = useState<ModuleId>('home');
 
-  const rol           = (user?.rol ?? 'admin') as 'admin' | 'paciente';
+  const rol = (user?.rol || (paciente ? 'paciente' : 'admin')) as 'admin' | 'paciente';
   const itemsVisibles = SIDEBAR_ITEMS.filter((item) => item.roles.includes(rol));
-  const currentLabel  = itemsVisibles.find((i) => i.id === activeModule)?.label ?? '';
+  const currentLabel = itemsVisibles.find((i) => i.id === activeModule)?.label ?? '';
+
+  useEffect(() => {
+    if (!user && !paciente) {
+      navigate('/login');
+    }
+  }, [user, paciente, navigate]);
 
   const handleLogout = () => {
-    logout();
+    if (user) logout();
+    if (paciente) logoutPaciente();
     navigate('/login');
   };
 
-  const nombreMostrado = user?.name || user?.nombre || 'Usuario';
-  const inicial        = nombreMostrado.charAt(0).toUpperCase();
+  const nombreMostrado =
+    user?.name ||
+    user?.nombre ||
+    (paciente ? `${paciente.nombres} ${paciente.apellidos}` : 'Usuario');
+  const inicial = nombreMostrado.charAt(0).toUpperCase();
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">

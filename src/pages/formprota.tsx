@@ -11,7 +11,9 @@ const Form = () => {
 
   const token =
     localStorage.getItem('access_token') ||
-    sessionStorage.getItem('access_token');
+    sessionStorage.getItem('access_token') ||
+    localStorage.getItem('paciente_token') ||
+    sessionStorage.getItem('paciente_token');
 
   const [formData, setFormData] = useState<FormDataPruebaProta>({
     nombres: '',

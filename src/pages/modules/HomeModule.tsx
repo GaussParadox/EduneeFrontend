@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { usePacienteAuth } from '../../context/Pacienteauthcontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faImage,faPencilRuler,faVideo} from '@fortawesome/free-solid-svg-icons';
-import { obtenerPruebasRecientes } from '@/services/pruebasService';
-import { Prueba } from 'interfaces/prueba';
+import {faImage,faPencilRuler,faVideo,faStar} from '@fortawesome/free-solid-svg-icons';
+
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -24,28 +24,19 @@ const getAppStyle = (tipo?: string) => {
 
 const HomeModule = () => {
   const { user } = useAuth();
+  const { paciente } = usePacienteAuth();
   const token =
     localStorage.getItem('access_token') ||
-    sessionStorage.getItem('access_token');
+    sessionStorage.getItem('access_token') ||
+    localStorage.getItem('paciente_token') ||
+    sessionStorage.getItem('paciente_token');
 
-  const [recentApps, setRecentApps] = useState<Prueba[]>([]);
-  const [loadingApps, setLoadingApps] = useState(true);
+
 
   useEffect(() => {
     if (!token) return;
 
-    const cargarPruebas = async () => {
-      try {
-        const data = await obtenerPruebasRecientes(token);
-        setRecentApps(data);
-      } catch (error) {
-        console.error('Error al cargar pruebas recientes', error);
-      } finally {
-        setLoadingApps(false);
-      }
-    };
-
-    cargarPruebas();
+    
   }, [token]);
 
   return (
@@ -58,7 +49,7 @@ const HomeModule = () => {
             Premium
           </div>
           <h2 className="text-4xl font-bold mb-3">
-            Bienvenido, {user?.nombre || 'Usuario'}
+            Bienvenido, {user?.nombre || user?.name || (paciente ? `${paciente.nombres} ${paciente.apellidos}` : 'Usuario')}
           </h2>
           <p className="text-purple-100 mb-6 max-w-2xl">
             Libera tu potencial educativo con nuestro conjunto completo de herramientas
@@ -114,7 +105,6 @@ const HomeModule = () => {
           </div>
         )}
       </div> */}
-
       {/* Recent Files & Active Projects */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Recent Files */}

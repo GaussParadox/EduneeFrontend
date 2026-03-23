@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { usePacienteAuth } from '../../context/Pacienteauthcontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faStar,
@@ -29,9 +30,12 @@ const getAppStyle = (tipo?: string) => {
 
 const PruebasModule = () => {
   const navigate = useNavigate();
+  const { paciente } = usePacienteAuth();
   const token =
     localStorage.getItem('access_token') ||
-    sessionStorage.getItem('access_token');
+    sessionStorage.getItem('access_token') ||
+    localStorage.getItem('paciente_token') ||
+    sessionStorage.getItem('paciente_token');
 
   const [recentApps, setRecentApps] = useState<Prueba[]>([]);
   const [loadingApps, setLoadingApps] = useState(true);
@@ -41,7 +45,7 @@ const PruebasModule = () => {
 
     const cargarPruebas = async () => {
       try {
-        const data = await obtenerPruebasRecientes(token);
+        const data = await obtenerPruebasRecientes(token, paciente?.paciente_id);
         setRecentApps(data);
       } catch (error) {
         console.error('Error al cargar pruebas recientes', error);
