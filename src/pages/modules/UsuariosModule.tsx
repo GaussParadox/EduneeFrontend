@@ -10,8 +10,8 @@ const formatFecha = (iso: string) =>
 
 // ─── Permisos por rol ─────────────────────────────────────────────────────────
 
-const MODULOS_ADMIN    = ['Home', 'Pruebas', 'Resultados', 'Files', 'Projects', 'Learn', 'Community', 'Resources'];
-const MODULOS_PACIENTE = ['Learn', 'Pruebas'];
+const MODULOS_ADMIN    = ['Home', 'Pruebas', 'Resultados', 'Files', 'Projects', 'Learn', 'Usuarios', 'Resources'];
+const MODULOS_PACIENTE = ['Home', 'Learn', 'Pruebas'];
 
 const BadgeModulos = ({ modulos }: { modulos: string[] }) => (
   <div className="flex flex-wrap gap-1">
