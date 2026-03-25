@@ -12,5 +12,6 @@
     "javascript": "javascriptreact"
   },
   "javascript.suggest.autoImports": true,
-  "javascript.updateImportsOnFileMove.enabled": "always"
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "tailwindCSS.lint.suggestCanonicalClasses": "ignore"
 }

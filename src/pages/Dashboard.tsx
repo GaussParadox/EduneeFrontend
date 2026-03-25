@@ -4,53 +4,54 @@ import { usePacienteAuth } from '../context/Pacienteauthcontext';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faHome, faThLarge, faFolderOpen, faGraduationCap,
-  faUsers, faBookOpen, faSearch, faBell,
-  faClipboardList, faSignOutAlt,
+  faHome,
+  faThLarge,
+  faCamera,
+  faGraduationCap,
+  faUsers,
+  faBookOpen,
+  faSearch,
+  faBell,
+  faClipboardList,
+  faSignOutAlt,
 } from '@fortawesome/free-solid-svg-icons';
 
-import HomeModule       from './modules/HomeModule';
-import PruebasModule    from './modules/PruebasModule';
+import HomeModule from './modules/HomeModule';
+import PruebasModule from './modules/PruebasModule';
 import ResultadosModule from './modules/ResultadosModule';
-import ProjectsModule   from './modules/ProjectsModule';
-import LearnModule      from './modules/LearnModule';
-import UsuariosModule   from './modules/UsuariosModule';
-import ResourcesModule  from './modules/ResourcesModule';
+import CamaraModule from './modules/CamaraModule';
+import LearnModule from './modules/LearnModule';
+import UsuariosModule from './modules/UsuariosModule';
+import ResourcesModule from './modules/ResourcesModule';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type ModuleId =
-  | 'home'
-  | 'pruebas'
-  | 'resultados'
-  | 'projects'
-  | 'learn'
-  | 'usuarios'
-  | 'resources';
+type ModuleId = 'home' | 'pruebas' | 'resultados' | 'projects' | 'learn' | 'usuarios' | 'resources';
 
 // ─── Module registry ──────────────────────────────────────────────────────────
 
 const MODULES: Record<ModuleId, React.ReactNode> = {
-  home:       <HomeModule />,
-  pruebas:    <PruebasModule />,
+  home: <HomeModule />,
+  pruebas: <PruebasModule />,
   resultados: <ResultadosModule />,
-  projects:   <ProjectsModule />,
-  learn:      <LearnModule />,
-  usuarios:   <UsuariosModule />,
-  resources:  <ResourcesModule />,
+  projects: <CamaraModule />,
+  learn: <LearnModule />,
+  usuarios: <UsuariosModule />,
+  resources: <ResourcesModule />,
 };
 
 // ─── Sidebar config ───────────────────────────────────────────────────────────
 
-const SIDEBAR_ITEMS: { id: ModuleId; icon: any; label: string; roles: ('admin' | 'paciente')[] }[] = [
-  { id: 'home',       icon: faHome,          label: 'Home',       roles: ['admin', 'paciente'] },
-  { id: 'pruebas',    icon: faThLarge,       label: 'Pruebas',    roles: ['admin', 'paciente'] },
-  { id: 'resultados', icon: faClipboardList, label: 'Resultados', roles: ['admin'] },
-  { id: 'projects',   icon: faFolderOpen,    label: 'Projects',   roles: ['admin'] },
-  { id: 'learn',      icon: faGraduationCap, label: 'Learn',      roles: ['admin', 'paciente'] },
-  { id: 'usuarios',   icon: faUsers,         label: 'Usuarios',   roles: ['admin'] },
-  { id: 'resources',  icon: faBookOpen,      label: 'Resources',  roles: ['admin'] },
-];
+const SIDEBAR_ITEMS: { id: ModuleId; icon: any; label: string; roles: ('admin' | 'paciente')[] }[] =
+  [
+    { id: 'home', icon: faHome, label: 'Home', roles: ['admin', 'paciente'] },
+    { id: 'pruebas', icon: faThLarge, label: 'Pruebas', roles: ['admin', 'paciente'] },
+    { id: 'resultados', icon: faClipboardList, label: 'Resultados', roles: ['admin'] },
+    { id: 'projects', icon: faCamera, label: 'Camara', roles: ['admin'] },
+    { id: 'learn', icon: faGraduationCap, label: 'Learn', roles: ['admin', 'paciente'] },
+    { id: 'usuarios', icon: faUsers, label: 'Usuarios', roles: ['admin'] },
+    { id: 'resources', icon: faBookOpen, label: 'Resources', roles: ['admin'] },
+  ];
 
 // ─── Dashboard Shell ──────────────────────────────────────────────────────────
 
@@ -84,10 +85,8 @@ const Dashboard = () => {
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
-
       {/* ── Sidebar ── */}
       <aside className="w-56 bg-white border-r border-gray-200 flex flex-col">
-
         {/* Logo */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center gap-3">
@@ -138,7 +137,6 @@ const Dashboard = () => {
 
         {/* Footer */}
         <div className="border-t border-gray-200">
-
           {/* Logout */}
           <button
             onClick={handleLogout}
@@ -163,7 +161,6 @@ const Dashboard = () => {
 
       {/* ── Main Content ── */}
       <div className="flex-1 flex flex-col overflow-hidden">
-
         {/* Top Bar */}
         <header className="bg-white border-b border-gray-200">
           <div className="flex items-center justify-between px-6 py-3">
@@ -184,9 +181,7 @@ const Dashboard = () => {
 
         {/* Active Module */}
         <main className="flex-1 overflow-y-auto bg-gray-50">
-          <div className="p-8">
-            {MODULES[activeModule]}
-          </div>
+          <div className="p-8">{MODULES[activeModule]}</div>
         </main>
       </div>
     </div>
