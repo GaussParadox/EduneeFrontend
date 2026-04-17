@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faUser,faIdCard,faPhone,faMapMarkerAlt,faVenusMars,faLock,faClipboardQuestion,faImage,} from '@fortawesome/free-solid-svg-icons';
+import {faUser,faIdCard,faPhone,faMapMarkerAlt,faVenusMars,faLock,faClipboardQuestion,faImage,faArrowLeft,} from '@fortawesome/free-solid-svg-icons';
 import {FormDataPruebaProta,Pregunta,Opcion,Respuesta,} from 'interfaces/FormDataPruebaProta';
 import Swal from 'sweetalert2';
 
@@ -96,6 +96,10 @@ const Form = () => {
         navigate('/dashboard');
       }
     });
+
+    return () => {
+      Swal.close();
+    };
   }, []);
 
   // ── Cargar preguntas desde la API ─────────────────────────────────────────
@@ -261,6 +265,17 @@ const Form = () => {
       `}</style>
 
       <div className="max-w-3xl mx-auto px-4 py-8">
+
+        {/* Botón Volver */}
+        <div className="mb-6">
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg font-semibold text-sm hover:bg-blue-600 transition-colors shadow-md hover:shadow-lg flex items-center gap-2"
+          >
+            <FontAwesomeIcon icon={faArrowLeft} />
+            <span>Volver</span>
+          </button>
+        </div>
 
         {/* Title */}
         <div className="mb-8">
@@ -436,11 +451,27 @@ const Form = () => {
 
                 {pregunta.recurso_visual && (
                   <div className="mb-4">
-                    <div className="bg-linear-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-lg p-8 flex items-center justify-center">
+                    <img
+                      src={`/images/${pregunta.recurso_visual}`}
+                      alt={`Imagen para pregunta ${pregunta.pregunta_id}`}
+                      className="w-full h-auto rounded-lg border-2 border-blue-200 shadow-sm"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        const placeholder = e.currentTarget.nextElementSibling as HTMLElement;
+                        if (placeholder) placeholder.style.display = 'block';
+                      }}
+                    />
+                    <div
+                      className="bg-linear-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-lg p-8 flex items-center justify-center"
+                      style={{ display: 'none' }}
+                    >
                       <div className="text-center">
                         <FontAwesomeIcon icon={faImage} className="text-4xl text-blue-400 mb-3" />
-                        <p className="text-blue-700 font-semibold">{pregunta.recurso_visual}</p>
-                        <p className="text-blue-500 text-xs mt-1">Placeholder de imagen</p>
+                        
+                        <p className="text-blue-700 font-semibold">Imagen no disponible</p>
+                        
+                        
+                        <p className="text-blue-500 text-xs mt-1">ID: {pregunta.recurso_visual}</p>
                       </div>
                     </div>
                   </div>

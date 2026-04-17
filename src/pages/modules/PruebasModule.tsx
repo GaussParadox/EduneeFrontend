@@ -2,14 +2,10 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePacienteAuth } from '../../context/Pacienteauthcontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faStar,
-  faImage,
-  faPencilRuler,
-  faVideo,
-} from '@fortawesome/free-solid-svg-icons';
+import {faStar,faImage,faPencilRuler,faVideo,} from '@fortawesome/free-solid-svg-icons';
 import { obtenerPruebasRecientes } from '@/services/pruebasService';
 import { Prueba } from 'interfaces/prueba';
+import { useAuth } from '@/context/AuthContext';
 
 const getAppStyle = (tipo?: string) => {
   switch (tipo) {
@@ -27,32 +23,40 @@ const getAppStyle = (tipo?: string) => {
 const PruebasModule = () => {
   const navigate = useNavigate();
   const { paciente } = usePacienteAuth();
+  const { user } = useAuth(); 
   const [recentApps, setRecentApps] = useState<Prueba[]>([]);
   const [loadingApps, setLoadingApps] = useState(true);
 
-  useEffect(() => {
-  
-    const token = localStorage.getItem('paciente_token');
-    
+ useEffect(() => {
+    const token = paciente?.access ?? user?.token; // ← directo del contexto
 
     if (!token) {
-      
+      setLoadingApps(false);
+      return;
+    }
+
+    if (!token) {
       setLoadingApps(false);
       return;
     }
 
     const cargarPruebas = async () => {
       try {
-        const data = await obtenerPruebasRecientes(token, paciente?.paciente_id);
+        const data = await obtenerPruebasRecientes(
+          token,
+          paciente ? paciente.paciente_id : undefined
+        );
+
         setRecentApps(data);
       } catch (error) {
+      
       } finally {
         setLoadingApps(false);
       }
     };
 
     cargarPruebas();
-  }, [paciente?.paciente_id]); // ← Depende solo de paciente_id
+  }, [paciente?.paciente_id, user?.token]);
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:p-8">

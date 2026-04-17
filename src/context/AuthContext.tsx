@@ -53,6 +53,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = (userData: User) => {
     setUser(userData);
     setIsAuthenticated(true);
+    const storage = userData.keepLoggedIn ? localStorage : sessionStorage;
+    storage.setItem('user', JSON.stringify(userData));
+    storage.setItem('access_token', userData.token); 
   };
 
   const logout = () => {
