@@ -39,7 +39,7 @@ interface RGB {
   b: number;
 }
 
-
+// ── Color database (Spanish names) ──────────────────────────────────────────
 const COLOR_DB: ColorEntry[] = [
   { name: 'Rojo',          r: [180,255], g: [0,80],   b: [0,80]   },
   { name: 'Rojo oscuro',   r: [100,179], g: [0,50],   b: [0,50]   },
@@ -126,11 +126,11 @@ const CamaraModule = () => {
 
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     const wrap = canvas.parentElement;
-    canvas.width  = wrap.offsetWidth  || 560;
-    canvas.height = wrap.offsetHeight || 420;
+    canvas.width  = wrap?.offsetWidth  ?? 560;
+    canvas.height = wrap?.offsetHeight ?? 420;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    if (frozen) return; 
+    if (frozen) return; // keep rendering video but skip color update
 
     const cx = Math.floor(canvas.width  / 2);
     const cy = Math.floor(canvas.height / 2);
@@ -155,7 +155,8 @@ const CamaraModule = () => {
       await video.play();
       setCameraOn(true);
     } catch (e) {
-      setError(`No se pudo acceder a la cámara: ${e.message}`);
+      const msg = e instanceof Error ? e.message : 'Error desconocido';
+      setError(`No se pudo acceder a la cámara: ${msg}`);
     }
   };
 
