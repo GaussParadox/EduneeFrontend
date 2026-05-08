@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { obtenerResultados } from '@/services/Resultadosservice';
-import { exportResultadosExcel } from '@/services/exportService';
+import { exportResultadosExcel, exportResultadoIndividualPDF } from '@/services/exportService';
 import { Sesion } from 'interfaces/sesion';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -76,6 +76,14 @@ const ResultadosModule = () => {
       exportResultadosExcel(filtradas);
     } catch (err) {
       console.error('Error al exportar:', err);
+    }
+  };
+
+  const handleExportPDF = (sesion: Sesion) => {
+    try {
+      exportResultadoIndividualPDF(sesion);
+    } catch (err) {
+      console.error('Error al exportar PDF:', err);
     }
   };
 
@@ -206,6 +214,7 @@ const ResultadosModule = () => {
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
+                        onClick={() => handleExportPDF(s)}
                         className="inline-flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition hover:bg-red-100"
                       >
                         <svg

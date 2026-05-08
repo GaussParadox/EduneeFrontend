@@ -251,3 +251,161 @@ export const exportUsuariosExcel = (admins: any[], pacientes: any[]): void => {
     throw new Error('No se pudo exportar el archivo de usuarios');
   }
 };
+
+// ─── Exportar Resultado Individual a PDF ──────────────────────────────────────
+
+/**
+ * Exportar un resultado individual a PDF
+ */
+export const exportResultadoIndividualPDF = (sesion: any): void => {
+  try {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 15;
+    let yPosition = margin;
+
+    // ─── Encabezado ────────────────────────────────────────────────────────
+
+    // Título principal
+    doc.setFontSize(20);
+    doc.setTextColor(79, 70, 229); // Color indigo
+    doc.text('REPORTE DE RESULTADO', margin, yPosition);
+    yPosition += 12;
+
+    // Línea separadora
+    doc.setDrawColor(200, 200, 200);
+    doc.line(margin, yPosition, pageWidth - margin, yPosition);
+    yPosition += 8;
+
+    // ─── Información de la Sesión ──────────────────────────────────────────
+
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('', 'bold');
+    doc.text('INFORMACIÓN GENERAL', margin, yPosition);
+    yPosition += 8;
+
+    doc.setFontSize(10);
+    doc.setFont('', 'normal');
+
+    const sessionInfo = [
+      { label: 'ID Sesión:', value: `#${sesion.sesion_id}` },
+      { label: 'Prueba:', value: sesion.prueba },
+      { label: 'Tipo de Prueba:', value: sesion.tipo_prueba || 'N/A' },
+      { label: 'Categoría:', value: sesion.categoria || 'N/A' },
+      {
+        label: 'Fecha de Registro:',
+        value: new Date(sesion.fecha_inicio).toLocaleDateString('es-CO', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        }),
+      },
+      {
+        label: 'Hora:',
+        value: new Date(sesion.fecha_inicio).toLocaleTimeString('es-CO'),
+      },
+    ];
+
+    sessionInfo.forEach((info) => {
+      doc.setFont('', 'bold');
+      doc.text(`${info.label}`, margin, yPosition);
+      doc.setFont('', 'normal');
+      doc.text(`${info.value}`, margin + 50, yPosition);
+      yPosition += 7;
+    });
+
+    yPosition += 5;
+
+    // ─── Información del Paciente ──────────────────────────────────────────
+
+    doc.setFontSize(12);
+    doc.setFont('', 'bold');
+    doc.setTextColor(79, 70, 229);
+    doc.text('DATOS DEL PACIENTE', margin, yPosition);
+    yPosition += 8;
+
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+
+    const pacienteInfo = [
+      {
+        label: 'Nombre Completo:',
+        value: `${sesion.paciente.nombres} ${sesion.paciente.apellidos}`,
+      },
+      { label: 'Número de Identificación:', value: sesion.paciente.numero_identificacion },
+      { label: 'Género:', value: sesion.paciente.genero || 'N/A' },
+      { label: 'Teléfono:', value: sesion.paciente.telefono || 'N/A' },
+    ];
+
+    pacienteInfo.forEach((info) => {
+      doc.setFont('', 'bold');
+      doc.text(`${info.label}`, margin, yPosition);
+      doc.setFont('', 'normal');
+      doc.text(`${info.value}`, margin + 60, yPosition);
+      yPosition += 7;
+    });
+
+    yPosition += 5;
+
+    // ─── Resultados ────────────────────────────────────────────────────────
+
+    doc.setFontSize(12);
+    doc.setFont('', 'bold');
+    doc.setTextColor(79, 70, 229);
+    doc.text('RESULTADOS', margin, yPosition);
+    yPosition += 8;
+
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+
+    const resultInfo = [
+      {
+        label: 'Puntaje Total:',
+        value: `${sesion.puntaje_total || 0}`,
+        highlight: true,
+      },
+      { label: 'Estado:', value: sesion.estado || 'N/A' },
+      {
+        label: 'Fecha de Finalización:',
+        value: sesion.fecha_fin
+          ? new Date(sesion.fecha_fin).toLocaleDateString('es-CO')
+          : 'No finalizado',
+      },
+    ];
+
+    resultInfo.forEach((info) => {
+      doc.setFont('', 'bold');
+      doc.text(`${info.label}`, margin, yPosition);
+      doc.setFont('', 'normal');
+      if (info.highlight) {
+        doc.setTextColor(79, 70, 229);
+        doc.setFont('', 'bold');
+      }
+      doc.text(`${info.value}`, margin + 60, yPosition);
+      doc.setTextColor(0, 0, 0);
+      doc.setFont('', 'normal');
+      yPosition += 7;
+    });
+
+    yPosition += 10;
+
+    // ─── Footer ────────────────────────────────────────────────────────────
+
+    doc.setFontSize(9);
+    doc.setTextColor(128, 128, 128);
+    doc.text(
+      `Generado el ${new Date().toLocaleDateString('es-CO')} a las ${new Date().toLocaleTimeString('es-CO')}`,
+      margin,
+      pageHeight - 10
+    );
+
+    const filename = `resultado_${sesion.sesion_id}_${new Date().getTime()}.pdf`;
+    doc.save(filename);
+  } catch (error) {
+    console.error('Error al exportar PDF individual:', error);
+    throw new Error('No se pudo exportar el archivo PDF');
+  }
+};
