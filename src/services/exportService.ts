@@ -12,6 +12,10 @@ export interface ExportOptions {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
+// GUÍA 8: Actividad 2 - Exportación CSV/Excel
+// Función auxiliar para formatear fechas en reportes
+// Manejo de tipos de datos: Convierte strings ISO a formato localizado (es-CO)
+// Manejo de excepciones implícito: Retorna vacío si no hay valor
 /**
  * Formatear fecha para los reportes
  */
@@ -24,6 +28,10 @@ const formatFecha = (iso: string): string => {
   });
 };
 
+// GUÍA 8: Actividad 2 - Exportación CSV/Excel
+// Función auxiliar para extraer headers/columnas de datos
+// Manejo de tipos de datos: Detecta estructura de objetos e identifica columnas
+// Control de excepciones: Valida arrays vacíos y retorna array vacío como fallback seguro
 /**
  * Obtener todas las claves de un array de objetos (columnas)
  */
@@ -32,6 +40,10 @@ const getColumns = (data: any[]): string[] => {
   return Object.keys(data[0]);
 };
 
+// GUÍA 8: Actividad 2 - Exportación CSV/Excel
+// Función auxiliar para normalizar estructuras de datos anidados
+// Manejo de tipos de datos: Detecta objetos anidados y aplana sus propiedades
+// Recursividad y mapeo: Procesa arrays de objetos complejos para exportación
 /**
  * Transformar datos para exportación
  */
@@ -54,6 +66,12 @@ const transformData = (data: any[]): any[] => {
 
 // ─── Exportar a Excel ─────────────────────────────────────────────────────────
 
+// GUÍA 8: Actividad 2 - Exportación CSV/Excel & Actividad 3 - Control de Excepciones
+// Función principal para exportación de datos a formato Excel (.xlsx)
+// Usa la librería XLSX: Convierte JSON a hojas de cálculo con auto-ajuste de columnas
+// Control de excepciones (I/O Errors): Bloque try/catch con mensajes amigables usando template strings
+// Manejo de errores de escritura: Captura excepciones de generación y descarga de archivos
+// Timestamp dinámico: Genera nombres únicos con getTime() para evitar sobrescrituras
 /**
  * Exportar datos a archivo Excel
  * @param data - Array de objetos a exportar
@@ -88,6 +106,13 @@ export const exportToExcel = (data: any[], options?: ExportOptions): void => {
 
 // ─── Exportar a PDF ───────────────────────────────────────────────────────────
 
+// GUÍA 8: Actividad 2 - Exportación CSV/Excel & Actividad 3 - Control de Excepciones
+// Función principal para exportación de datos a formato PDF con tabla profesional
+// Usa librerías jsPDF + autoTable: Genera documentos PDF con estilos, headers y tablas
+// Control de excepciones (I/O Errors): Bloque try/catch con validaciones de datos
+// Manejo de headers y columnas: Permite especificar columnas selectivas o exportar todas
+// Tipos de datos: Formatea fechas ISO detectando strings con 'T' y aplicando formatFecha()
+// Template strings: Genera nombres de archivo dinámicos con timestamp
 /**
  * Exportar datos a archivo PDF con tabla
  * @param data - Array de objetos a exportar
@@ -158,6 +183,11 @@ export const exportToPDF = (data: any[], columns?: string[], options?: ExportOpt
 
 // ─── Exportar Resultados específicos ───────────────────────────────────────────
 
+// GUÍA 8: Actividad 2 - Exportación CSV/Excel
+// Función especializada para exportar resultados de sesiones a Excel
+// Mapeo y transformación: Estructura datos de sesiones con información del paciente
+// Manejo de tipos de datos: Extrae y formatea fechas, nombres, IDs y puntajes
+// Reutiliza exportToExcel: Delega la generación del archivo a la función principal
 /**
  * Exportar resultados de sesiones a Excel
  */
@@ -180,6 +210,11 @@ export const exportResultadosExcel = (sesiones: any[]): void => {
   });
 };
 
+// GUÍA 8: Actividad 2 - Exportación CSV/Excel
+// Función especializada para exportar resultados de sesiones a PDF
+// Transformación de datos: Mapea información de sesiones con datos del paciente
+// Manejo de tipos de datos: Normaliza fechas, nombres y puntajes para visualización
+// Reutiliza exportToPDF: Utiliza la función principal con título personalizado
 /**
  * Exportar resultados de sesiones a PDF
  */
@@ -203,6 +238,13 @@ export const exportResultadosPDF = (sesiones: any[]): void => {
 
 // ─── Exportar Usuarios ─────────────────────────────────────────────────────────
 
+// GUÍA 8: Actividad 2 - Exportación CSV/Excel & Actividad 3 - Control de Excepciones
+// Función avanzada para exportar múltiples tipos de usuarios en hojas separadas
+// Manejo de múltiples hojas: Crea un workbook con hojas para administradores y pacientes
+// Manejo de headers: Define columnas específicas para cada tipo de usuario con ancho ajustado
+// Control de excepciones (I/O Errors): Bloque try/catch con validación de datos
+// Manejo de permisos: Acceso a localStorage/API para obtener datos de usuarios
+// Mensajes amigables: Template strings informativas para errores
 /**
  * Exportar usuarios (administradores y pacientes) a Excel
  */
@@ -254,6 +296,13 @@ export const exportUsuariosExcel = (admins: any[], pacientes: any[]): void => {
 
 // ─── Exportar Resultado Individual a PDF ──────────────────────────────────────
 
+// GUÍA 8: Actividad 2 - Exportación CSV/Excel & Actividad 3 - Control de Excepciones
+// Función especializada para generar reportes PDF individuales detallados por sesión
+// Usa jsPDF: Crea documentos formateados con encabezados, secciones y footers profesionales
+// Manejo de tipos de datos: Procesa fechas ISO, strings y valores numéricos con formateo localizado
+// Control de excepciones (I/O Errors): Bloque try/catch para captura de errores en generación
+// Mapeo de datos: Estructura información en secciones (General, Paciente, Resultados)
+// Template strings: Genera nombres únicos de archivo con ID de sesión y timestamp
 /**
  * Exportar un resultado individual a PDF
  */
