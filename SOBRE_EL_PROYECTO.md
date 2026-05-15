@@ -7,6 +7,7 @@
 ## 🎯 ¿De qué trata Edunee?
 
 **Edunee** es una aplicación web moderna diseñada para:
+
 - 👥 Administradores: Gestionar pruebas, usuarios, resultados y contenido educativo
 - 🧑‍💻 Pacientes: Realizar pruebas de detección de colores, ver resultados, aprender sobre daltonismo
 - 📊 Análisis: Exportar datos de pruebas en múltiples formatos para evaluación profesional
@@ -18,15 +19,17 @@ La aplicación funciona como un **complemento digital para diagnósticos visuale
 ## 🛠️ Stack Tecnológico
 
 ### Backend
+
 ```
-🐍 Django 
+🐍 Django
    ├─ REST API (DRF)
    ├─ Autenticación JWT (JSON Web Tokens)
    ├─ Modelos de Datos (Tests, Results, Users)
    └─ Gestión de Permisos
 ```
 
-### Frontend  
+### Frontend
+
 ```
 ⚛️ React 18 + Vite
    ├─ TypeScript (tipado estricto)
@@ -37,6 +40,7 @@ La aplicación funciona como un **complemento digital para diagnósticos visuale
 ```
 
 ### Base de Datos
+
 ```
 🗄️ Supabase (PostgreSQL)
    ├─ Tablas: usuarios, pruebas, resultados, sesiones
@@ -46,6 +50,7 @@ La aplicación funciona como un **complemento digital para diagnósticos visuale
 ```
 
 ### Autenticación
+
 ```
 🔐 JWT (JSON Web Tokens)
    ├─ Access Token (corta duración)
@@ -55,6 +60,7 @@ La aplicación funciona como un **complemento digital para diagnósticos visuale
 ```
 
 ### Exportación de Datos
+
 ```
 📊 Librerías de Exportación:
    ├─ XLSX (SheetJS) → Archivos Excel (.xlsx)
@@ -67,6 +73,7 @@ La aplicación funciona como un **complemento digital para diagnósticos visuale
 ## 📦 Módulos Implementados
 
 ### 1️⃣ **Login Dual**
+
 ```
 🔑 Dos tipos de usuarios:
 
@@ -84,6 +91,7 @@ Pacientes
 ```
 
 **Archivos clave:**
+
 - `src/services/authService.ts` - Lógica de autenticación
 - `src/context/AuthContext.tsx` - Estado global de admin
 - `src/context/PacienteAuthContext.tsx` - Estado global de pacientes
@@ -93,6 +101,7 @@ Pacientes
 ---
 
 ### 2️⃣ **Módulo de Pruebas**
+
 ```
 📝 Pruebas de Ishihara Digital
 
@@ -109,6 +118,7 @@ Estructura:
 ```
 
 **Flujo:**
+
 1. Usuario selecciona una prueba
 2. Se inicia sesión (timing, datos del paciente)
 3. Se presentan preguntas una por una
@@ -117,6 +127,7 @@ Estructura:
 6. Se guarda sesión con resultado
 
 **Archivos clave:**
+
 - `src/services/pruebasService.ts` - API de pruebas
 - `src/pages/modules/PruebasModule.tsx` - Interfaz de pruebas
 - `interfaces/Prueba.ts` - Estructura de datos
@@ -124,6 +135,7 @@ Estructura:
 ---
 
 ### 3️⃣ **Módulo de Resultados**
+
 ```
 📊 Visualización y Análisis
 
@@ -146,6 +158,7 @@ Filtrado:
 ```
 
 **Archivos clave:**
+
 - `src/services/Resultadosservice.ts` - Datos de resultados
 - `src/pages/modules/ResultadosModule.tsx` - Visualización
 - `interfaces/Sesion.ts` - Estructura de sesión
@@ -153,6 +166,7 @@ Filtrado:
 ---
 
 ### 4️⃣ **Módulo de Aprendizaje sobre Daltonismo**
+
 ```
 📚 Contenido Educativo
 
@@ -176,6 +190,7 @@ Temas Cubiertos:
 ```
 
 **Archivos clave:**
+
 - `src/pages/modules/LearnModule.tsx` - Interfaz educativa
 - `src/assets/` - Imágenes y gráficos educativos
 - `public/images/` - Recursos visuales
@@ -183,6 +198,7 @@ Temas Cubiertos:
 ---
 
 ### 5️⃣ **Importación de Excel y PDF**
+
 ```
 📥 Gestión de Datos (Solo Administradores)
 
@@ -204,6 +220,7 @@ Características:
 ```
 
 **Flujo de Importación:**
+
 1. Admin selecciona archivo Excel/PDF
 2. Sistema valida estructura
 3. Parseo de datos
@@ -213,6 +230,7 @@ Características:
 7. Generación de reporte
 
 **Archivos clave:**
+
 - `src/services/exportService.ts` - Manejo de archivos
 - `src/pages/modules/UsuariosModule.tsx` - Gestión de usuarios
 - Herramientas: XLSX (lectura), jsPDF (generación)
@@ -220,6 +238,7 @@ Características:
 ---
 
 ### 6️⃣ **Módulo de Cámara - Detección de Colores**
+
 ```
 📷 Tecnología Computer Vision en Navegador
 
@@ -242,6 +261,7 @@ Funcionalidad:
 ```
 
 **Algoritmo Base:**
+
 ```javascript
 // Pseudocódigo
 1. Solicitar permisos de cámara
@@ -255,12 +275,14 @@ Funcionalidad:
 ```
 
 **Tecnologías:**
+
 - `getUserMedia()` API del navegador
 - Canvas para procesamiento de imágenes
 - Análisis de histogramas
 - Comparación de espectros RGB
 
 **Archivos clave:**
+
 - `src/pages/modules/CamaraModule.tsx` - Interfaz de cámara
 - Canvas API para procesamiento
 - Fallback: Pruebas tradicionales si no hay cámara
@@ -414,6 +436,7 @@ Usuario Administrador
 ### Formatos Disponibles
 
 **Excel (.xlsx)**
+
 - Hojas múltiples (una por tipo de dato)
 - Datos de pacientes y resultados
 - Headers automáticos
@@ -421,6 +444,7 @@ Usuario Administrador
 - Timestamps para evitar sobrescrituras
 
 **PDF**
+
 - Reportes formateados profesionales
 - Tablas con estilos
 - Headers y footers
@@ -428,9 +452,10 @@ Usuario Administrador
 - Fecha/hora de generación
 
 **Ejemplo de Exportación:**
+
 ```javascript
 // Admin exporta resultados de sesiones
-exportResultadosExcel(sesiones) 
+exportResultadosExcel(sesiones)
 → archivo: resultados-sesiones_1715646180000.xlsx
 
 // Admin exporta reporte individual
@@ -476,6 +501,7 @@ npm run lint         # Ejecuta ESLint
 ```
 
 **Variables de Entorno Necesarias:**
+
 ```
 VITE_API_URL=http://localhost:8000/api
 VITE_SUPABASE_URL=tu-url-supabase
@@ -498,6 +524,7 @@ VITE_SUPABASE_KEY=tu-clave-publica
 ## 🎓 Caso de Uso
 
 **Escenario Típico:**
+
 ```
 1. Clínica oftalmológica registra pacientes en Edunee (importa desde Excel)
 2. Paciente accede desde casa, realiza prueba de daltonismo
